@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using pM = Pixi.PixiManager;
+using Pixi.FieldTools;
 
 namespace Pixi
 {
@@ -25,7 +27,18 @@ namespace Pixi
             InitializeComponent();
             WindowState = WindowState.Maximized;
             PixiManager.mainPanel = MainPanel;
-            PixiManager.CreateDrawArea(16);
+            PixiManager.CreateDrawArea(64);
+            Tools.OnStart();
+        }
+
+        private void FillButton_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.FillBucket;
+        }
+
+        private void DrawButton_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Draw;
         }
     }
 }
