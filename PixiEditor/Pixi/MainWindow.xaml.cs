@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using pM = Pixi.PixiManager;
 using Pixi.FieldTools;
+using Pixi.Settings;
 
 namespace Pixi
 {
@@ -26,8 +27,8 @@ namespace Pixi
         {
             InitializeComponent();
             WindowState = WindowState.Maximized;
-            PixiManager.mainPanel = MainPanel;
-            PixiManager.CreateDrawArea(64);
+            pM.mainPanel = MainPanel;
+            pM.CreateDrawArea(32);
             Tools.OnStart();
         }
 
@@ -39,6 +40,22 @@ namespace Pixi
         private void DrawButton_Click(object sender, RoutedEventArgs e)
         {
             Tools.selectedTool = Tools.AvailableTools.Draw;
+        }
+
+        private void ColorPickButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToolSettings.firstColorText= FirstColorInputBox;
+            ToolSettings.firstColorRectangle = FirstColorRectangle;
+            if (e.Source == ColorPickButton)
+            {
+                ToolSettings.SetColorsToDraw(true);
+            }
+            else if(e.Source == SecondColorPickButton)
+            {
+                ToolSettings.secondColorText = SecondColorInputBox;
+                ToolSettings.secondColorRectangle = SecondColorRectangle;
+                ToolSettings.SetColorsToDraw(false);
+            }
         }
     }
 }

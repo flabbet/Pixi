@@ -6,16 +6,22 @@
         xmlns:local="clr-namespace:Pixi"
         mc:Ignorable="d"
         Title="Pixi" Height="759.69" Width="1278.769" Background="#FF4B4B4B">
-	<Grid>
-		<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
-			<Canvas
-				Width="608" Height="608" Background="White" Name="MainPanel" >
-			</Canvas>
-		</Border>
-		<Button Content="Draw" HorizontalAlignment="Left" Margin="25,46,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="DrawButton_Click"/>
-		<Button Content="Fill" HorizontalAlignment="Left" Margin="25,89,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="FillButton_Click"/>
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+            <Canvas
+				Width="608" Height="608" Background="White" Name="MainPanel" />
+        </Border>
+        <Button Content="Draw" HorizontalAlignment="Left" Margin="25,46,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="DrawButton_Click"/>
+        <Button Content="Fill" HorizontalAlignment="Left" Margin="25,89,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="FillButton_Click"/>
+        <TextBox Height="20" Margin="25,0,0,57" HorizontalAlignment="Left" Width="65" VerticalAlignment="Bottom" MaxLength="9" Name="FirstColorInputBox"/>
+        <Button Height="20" Width="50" Margin="90,0,0,57" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Pick" Name="ColorPickButton" Click="ColorPickButton_Click"></Button>
+        <TextBox Height="20" Margin="25,0,0,32" HorizontalAlignment="Left" Width="65" VerticalAlignment="Bottom" MaxLength="9" Name="SecondColorInputBox"/>
+        <Button Height="20" Width="50" Margin="90,0,0,32" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Pick" Name="SecondColorPickButton" Click="ColorPickButton_Click"></Button>
+        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="25,0,0,133" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
+        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="54,0,0,100" Name="SecondColorRectangle"></Rectangle>
 
-	</Grid>
+
+    </Grid>
 </Window>
 
 
