@@ -29,6 +29,10 @@ namespace Pixi
             WindowState = WindowState.Maximized;
             pM.mainPanel = MainPanel;
             pM.CreateDrawArea(32);
+            ToolSettings.firstColorRectangle = FirstColorRectangle;
+            ToolSettings.secondColorRectangle = SecondColorRectangle;
+            ToolSettings.firstColorRectangle.Fill = Tools.firstColor;
+            ToolSettings.secondColorRectangle.Fill = Tools.secondColor;
             Tools.OnStart();
         }
 

@@ -16,10 +16,11 @@ namespace Pixi
     {
         class Tools
         {
-            public static  AvailableTools selectedTool = AvailableTools.Draw;
-            private static Brush pickedColor;
-            public static Brush firstColor, secondColor = Brushes.Transparent;
-            private static Rectangle selectedRectangle;
+            public static  AvailableTools selectedTool = AvailableTools.Draw;                    //selected tool variable
+            private static Brush pickedColor;                                                    //color that will be applied
+            public static Brush firstColor = Brushes.Aqua, secondColor = Brushes.Transparent;    //first and second color triggered to two mouse buttons
+            private static Rectangle mouseOnRectangle;
+            private static Rectangle selectedRectangle;                                          //rectangle that is selected
             public enum AvailableTools
             {
                 Draw = 0, FillBucket = 1,
@@ -28,13 +29,15 @@ namespace Pixi
             public static void OnStart()
             {
                 
-                MessageBox.Show("Every feature works perfectly with 64 x 64 or less canvas size, with bigger size some features can crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);
                 foreach (Rectangle i in PixiManager.fields)
                 {
                     i.MouseEnter += Field_MouseEnter;
                     i.MouseLeftButtonDown += Field_MouseLeftButtonDown;
                     i.MouseRightButtonDown += Field_MouseRightButtonDown;
+                    i.MouseLeave += I_MouseLeave;
                 }
+                
             }
 
             //Flood fill alghoritm
@@ -113,6 +116,9 @@ namespace Pixi
 
             private static void Field_MouseEnter(object sender, MouseEventArgs e)
             {
+                mouseOnRectangle = (Rectangle)(e.Source as FrameworkElement);
+                mouseOnRectangle.Stroke = Brushes.Black;
+                mouseOnRectangle.StrokeThickness = 0.5f;
                 if(e.LeftButton == MouseButtonState.Pressed)
                 {
                     selectedRectangle = (Rectangle)(e.Source as FrameworkElement);
@@ -126,7 +132,12 @@ namespace Pixi
                     CheckTool();
                 }
             }
-#endregion
+
+            private static void I_MouseLeave(object sender, MouseEventArgs e)
+            {
+                mouseOnRectangle.StrokeThickness = 0;
+            }
+            #endregion
         }
     }
 }
