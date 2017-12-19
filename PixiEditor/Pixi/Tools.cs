@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
 using Pixi.Settings;
+using System.Windows.Resources;
 
 namespace Pixi
 {
@@ -16,14 +17,14 @@ namespace Pixi
     {
         class Tools
         {
-            public static  AvailableTools selectedTool = AvailableTools.Draw;                    //selected tool variable
+            public static  AvailableTools selectedTool = AvailableTools.Pen;                    //selected tool variable
             private static Brush pickedColor;                                                    //color that will be applied
-            public static Brush firstColor = Brushes.Aqua, secondColor = Brushes.Transparent;    //first and second color triggered to two mouse buttons
+            public static Brush firstColor = Brushes.Black, secondColor = Brushes.Transparent;    //first and second color triggered to two mouse buttons
             private static Rectangle mouseOnRectangle;
             private static Rectangle selectedRectangle;                                          //rectangle that is selected
             public enum AvailableTools
             {
-                Draw = 0, FillBucket = 1,
+                Pen = 0, FillBucket = 1,
             }
 
             public static void OnStart()
@@ -64,7 +65,7 @@ namespace Pixi
 
             public static void Draw(Rectangle fieldToColor, Brush color)
             {
-                if (selectedTool == AvailableTools.Draw)
+                if (selectedTool == AvailableTools.Pen)
                 {
                     if (fieldToColor.Fill != color)
                     {
@@ -75,7 +76,7 @@ namespace Pixi
 
             private static void CheckTool()
             {
-                if(selectedTool == AvailableTools.Draw)
+                if(selectedTool == AvailableTools.Pen)
                 {
                     Draw(selectedRectangle, pickedColor);
                 }
@@ -96,7 +97,6 @@ namespace Pixi
                     pickedColor = secondColor;
                 }
             }
-
 
             #region events
 

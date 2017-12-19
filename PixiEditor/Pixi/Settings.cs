@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,10 +22,9 @@ namespace Pixi
 
         class ToolSettings
         {
-            public static TextBox firstColorText;
-            public static TextBox secondColorText;
             public static Rectangle firstColorRectangle;
             public static Rectangle secondColorRectangle;
+
             public static void SetColorsToDraw(bool firstColor)
             {
                 try
@@ -32,18 +32,16 @@ namespace Pixi
                     if (firstColor == true)
                     {
                         SolidColorBrush mySolidColorBrush = new SolidColorBrush();
-                        mySolidColorBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(firstColorText.Text));
+                        mySolidColorBrush = mySolidColorBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(MainWindow.firstColorPicker.SelectedColorText));
                         Tools.firstColor = mySolidColorBrush;
                         firstColorRectangle.Fill = mySolidColorBrush;
-                        firstColorText.Text = null;
                     }
                     else
                     {
                         SolidColorBrush mySecondSolidColorBrush = new SolidColorBrush();
-                        mySecondSolidColorBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(secondColorText.Text));
+                        mySecondSolidColorBrush = (SolidColorBrush)(new BrushConverter().ConvertFrom(MainWindow.secondColorPicker.SelectedColorText));
                         Tools.secondColor = mySecondSolidColorBrush;
                         secondColorRectangle.Fill = mySecondSolidColorBrush;
-                        secondColorText.Text = null;
                     }
                 }
                 catch
@@ -51,6 +49,30 @@ namespace Pixi
                     MessageBox.Show("Wrong Input!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
+
+
+           /* public static void CreateSaveBitmap(Canvas canvas, string filename)
+            {
+                RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
+                (int)canvas.Width, (int)canvas.Height,
+                96d, 96d, PixelFormats.Pbgra32);
+                // needed otherwise the image output is black
+                canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
+                canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
+
+                renderBitmap.Render(canvas);
+
+                //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+                using (FileStream file = File.Create(filename))
+                {
+                    encoder.Save(file);
+                }
+                */
+            } 
+              
     }
-}
+} 
+

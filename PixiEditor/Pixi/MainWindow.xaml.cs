@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.DataGrid;
 using pM = Pixi.PixiManager;
 using Pixi.FieldTools;
 using Pixi.Settings;
@@ -23,11 +25,16 @@ namespace Pixi
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static Cursor activeCursor;
+        public static ColorPicker firstColorPicker, secondColorPicker;
         public MainWindow()
         {
             InitializeComponent();
-            WindowState = WindowState.Maximized;
+            WindowState = System.Windows.WindowState.Maximized;
             pM.mainPanel = MainPanel;
+            activeCursor = this.Cursor;
+            firstColorPicker = FirstColorPicker;
+            secondColorPicker = SecondColorPicker;
             pM.CreateDrawArea(32);
             ToolSettings.firstColorRectangle = FirstColorRectangle;
             ToolSettings.secondColorRectangle = SecondColorRectangle;
@@ -41,25 +48,31 @@ namespace Pixi
             Tools.selectedTool = Tools.AvailableTools.FillBucket;
         }
 
-        private void DrawButton_Click(object sender, RoutedEventArgs e)
+        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
-            Tools.selectedTool = Tools.AvailableTools.Draw;
-        }
-
-        private void ColorPickButton_Click(object sender, RoutedEventArgs e)
-        {
-            ToolSettings.firstColorText= FirstColorInputBox;
-            ToolSettings.firstColorRectangle = FirstColorRectangle;
-            if (e.Source == ColorPickButton)
+            if (e.Source == FirstColorPicker)
             {
                 ToolSettings.SetColorsToDraw(true);
             }
-            else if(e.Source == SecondColorPickButton)
+            else
             {
-                ToolSettings.secondColorText = SecondColorInputBox;
-                ToolSettings.secondColorRectangle = SecondColorRectangle;
                 ToolSettings.SetColorsToDraw(false);
             }
         }
+
+        private void DrawButton_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Pen;
+        }
+
+       
+        //Save button
+       /* private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ToolSettings.CreateSaveBitmap(MainPanel, @"D:\temp\test image.png");
+        }
+        */
+        
+        
     }
 }

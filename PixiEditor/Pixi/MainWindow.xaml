@@ -3,26 +3,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
         xmlns:local="clr-namespace:Pixi"
         mc:Ignorable="d"
         Title="Pixi" Height="759.69" Width="1278.769" Background="#FF4B4B4B">
     <Grid>
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="608" Height="608" Margin="10,29,10,10" >
+            <Border.Background>
+                <ImageBrush ImageSource="transparent bg.png" Stretch="UniformToFill" Opacity="0.2"/>
+            </Border.Background>
+        </Border>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
             <Canvas
-				Width="608" Height="608" Background="White" Name="MainPanel" />
+				Width="608" Height="608" Name="MainPanel"/>
         </Border>
         <Button Content="Draw" HorizontalAlignment="Left" Margin="25,46,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="DrawButton_Click"/>
         <Button Content="Fill" HorizontalAlignment="Left" Margin="25,89,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="FillButton_Click"/>
-        <!--Wybór kolorów-->
-        <TextBox Height="20" Margin="25,0,0,57" HorizontalAlignment="Left" Width="70" VerticalAlignment="Bottom" MaxLength="12" Name="FirstColorInputBox"/>
-        <Button Height="20" Width="50" Margin="95,0,0,57" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Pick" Name="ColorPickButton" Click="ColorPickButton_Click"></Button>
-        <TextBox Height="20" Margin="25,0,0,32" HorizontalAlignment="Left" Width="70" VerticalAlignment="Bottom" MaxLength="12" Name="SecondColorInputBox"/>
-        <Button Height="20" Width="50" Margin="95,0,0,32" VerticalAlignment="Bottom" HorizontalAlignment="Left" Content="Pick" Name="SecondColorPickButton" Click="ColorPickButton_Click"></Button>
-        <!--Kwadraty pokazujące kolor-->
-        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="25,0,0,133" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
-        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="54,0,0,100" Name="SecondColorRectangle"></Rectangle>
-
-
+        <!--Wybór kolorów-->   
+        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="19,0,0,51" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
+        <xctk:ColorPicker Width="50" Height="50" Margin="19,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="HueSaturationBrightness" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
+        <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="49,0,0,22" Name="SecondColorRectangle"></Rectangle>
+        <xctk:ColorPicker Width="50" Height="50" Margin="49,0,0,22" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="HueSaturationBrightness" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" Name="SecondColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
+        <!--<Button Content="Save" Width="50" Height="28" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0" Click="Button_Click"></Button>-->
     </Grid>
 </Window>
 
