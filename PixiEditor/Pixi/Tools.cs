@@ -27,18 +27,19 @@ namespace Pixi
                 Pen = 0, FillBucket = 1,
             }
 
+            //On application start
             public static void OnStart()
+            {              
+                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);              
+            }
+
+            //when draw area is created
+            public static void OnDrawAreaCreated(Rectangle fieldToAdd)
             {
-                
-                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);
-                foreach (Rectangle i in PixiManager.fields)
-                {
-                    i.MouseEnter += Field_MouseEnter;
-                    i.MouseLeftButtonDown += Field_MouseLeftButtonDown;
-                    i.MouseRightButtonDown += Field_MouseRightButtonDown;
-                    i.MouseLeave += I_MouseLeave;
-                }
-                
+                fieldToAdd.MouseEnter += Field_MouseEnter;
+                fieldToAdd.MouseLeftButtonDown += Field_MouseLeftButtonDown;
+                fieldToAdd.MouseRightButtonDown += Field_MouseRightButtonDown;
+                fieldToAdd.MouseLeave += I_MouseLeave;
             }
 
             //Flood fill alghoritm
@@ -62,7 +63,7 @@ namespace Pixi
                     }
                 }
             }
-
+            //draw tool
             public static void Draw(Rectangle fieldToColor, Brush color)
             {
                 if (selectedTool == AvailableTools.Pen)
@@ -73,7 +74,7 @@ namespace Pixi
                     }
                 }
             }
-
+            //Check what tool is selected
             private static void CheckTool()
             {
                 if(selectedTool == AvailableTools.Pen)

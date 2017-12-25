@@ -160,7 +160,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="transparent bg.png" />
+    <Resource Include="Images\transparent bg.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="pencursor.cur" />

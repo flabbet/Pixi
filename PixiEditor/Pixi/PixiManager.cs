@@ -12,9 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Pixi.FieldTools;
 
-//TODO: Ulepsz rozkładanie kafelków
-//TODO: Dodaj paletę kolorów
 
 namespace Pixi
 {
@@ -27,6 +26,11 @@ namespace Pixi
 
         public static void CreateDrawArea(int size)
         {
+            if(size > 1024)
+            {
+               MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to create such a large canvas? This process may take long time or even crash Pixi", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, defaultResult: MessageBoxResult.No);
+                if (messageBoxResult == MessageBoxResult.No) return;
+            }
             drawAreaSize = size;
             int timesDone = 0;
             int toSpace = 0;
@@ -50,7 +54,17 @@ namespace Pixi
                 fields.Add(clone);
                 timesDone++;
                 mainPanel.Children.Add(clone);
+                Tools.OnDrawAreaCreated(clone);
             }
+        }
+
+        public static void DeleteDrawArea()
+        {
+            foreach (Rectangle i in fields)
+            {
+                mainPanel.Children.Remove(i);
+            }
+            fields.Clear();
         }
 
         public static Rectangle FieldCords(int x, int y)

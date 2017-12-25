@@ -26,6 +26,9 @@ namespace Pixi
     public partial class MainWindow : Window
     {
         public static Cursor activeCursor;
+        public static Border transparentBackground;
+        public static Grid primaryGrid;
+        public static ListView menuslistView;
         public static ColorPicker firstColorPicker, secondColorPicker;
         public MainWindow()
         {
@@ -33,9 +36,10 @@ namespace Pixi
             WindowState = System.Windows.WindowState.Maximized;
             pM.mainPanel = MainPanel;
             activeCursor = this.Cursor;
+            primaryGrid = MainGrid;
+            transparentBackground = CanvasBackground;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
-            pM.CreateDrawArea(32);
             ToolSettings.firstColorRectangle = FirstColorRectangle;
             ToolSettings.secondColorRectangle = SecondColorRectangle;
             ToolSettings.firstColorRectangle.Fill = Tools.firstColor;
@@ -60,6 +64,29 @@ namespace Pixi
             }
         }
 
+        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        {
+            DependencyObject dpobj = sender as DependencyObject;
+            string name = (dpobj.GetValue(NameProperty) as string) + "ListView";
+            ListView listViewToOpenClose;
+            listViewToOpenClose = (ListView)FindName(name);
+            menuslistView = listViewToOpenClose;
+            if (listViewToOpenClose.Visibility == Visibility.Collapsed)
+            {
+                listViewToOpenClose.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                listViewToOpenClose.Visibility = Visibility.Collapsed;
+            }
+        }
+        //creates size chooser popup 
+        private void NewFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            menuslistView.Visibility = Visibility.Collapsed;
+            ToolSettings.CreateSizePopup();
+        }
+
         private void DrawButton_Click(object sender, RoutedEventArgs e)
         {
             Tools.selectedTool = Tools.AvailableTools.Pen;
@@ -67,7 +94,7 @@ namespace Pixi
 
        
         //Save button
-       /* private void Button_Click(object sender, RoutedEventArgs e)
+       /* private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             ToolSettings.CreateSaveBitmap(MainPanel, @"D:\temp\test image.png");
         }

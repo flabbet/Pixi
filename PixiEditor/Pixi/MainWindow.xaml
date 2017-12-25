@@ -8,24 +8,31 @@
         xmlns:local="clr-namespace:Pixi"
         mc:Ignorable="d"
         Title="Pixi" Height="759.69" Width="1278.769" Background="#FF4B4B4B">
-    <Grid>
-        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="608" Height="608" Margin="10,29,10,10" >
+    <Grid Name="MainGrid">
+        <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="816" Height="816" Margin="10,29,10,10" Visibility="Hidden" Name="CanvasBackground">
             <Border.Background>
-                <ImageBrush ImageSource="transparent bg.png" Stretch="UniformToFill" Opacity="0.2"/>
+                <ImageBrush ImageSource="Images/transparent bg.png" Stretch="UniformToFill" Opacity="0.2"/>
             </Border.Background>
         </Border>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
             <Canvas
-				Width="608" Height="608" Name="MainPanel"/>
+				Width="816" Height="816" Name="MainPanel"/>
+
         </Border>
         <Button Content="Draw" HorizontalAlignment="Left" Margin="25,46,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="DrawButton_Click"/>
         <Button Content="Fill" HorizontalAlignment="Left" Margin="25,89,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="FillButton_Click"/>
-        <!--Wybór kolorów-->   
+        <!--Color choosing-->
         <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="19,0,0,51" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
         <xctk:ColorPicker Width="50" Height="50" Margin="19,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="HueSaturationBrightness" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
         <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="49,0,0,22" Name="SecondColorRectangle"></Rectangle>
         <xctk:ColorPicker Width="50" Height="50" Margin="49,0,0,22" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="HueSaturationBrightness" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" Name="SecondColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
-        <!--<Button Content="Save" Width="50" Height="28" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,1,0,0" Click="Button_Click"></Button>-->
+
+        <!--Menus-->
+        <Button Height="28" Width="50" Content="File" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" Click="MenuButton_Click" Name="File"></Button>
+        <ListView Height="300" Width="200" Margin="10,28,0,0" Background="White" Visibility="Collapsed" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="1" BorderBrush="Black" Name="FileListView">
+            <Button Content="   New...                         CTRL + N" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="NewFileButton_Click"/>
+            <!--<Button Content="   Save...                         CTRL + S" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="SaveButton_Click"/>-->
+        </ListView>
     </Grid>
 </Window>
 
