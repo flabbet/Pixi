@@ -14,12 +14,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.DataGrid;
+using Microsoft.Win32;
 using System.Windows.Shapes;
 using Pixi.FieldTools;
 
 namespace Pixi
 {
-    namespace Settings
+    namespace Shortcuts
     {
 
         class ToolSettings
@@ -28,6 +29,7 @@ namespace Pixi
             public static Rectangle secondColorRectangle;
             private static string sizeInputBoxContent;
             private static TextBox sizeTextBox;
+            private static string fileName;
             private static ChildWindow inputPopup;
 
             //Set color to be applied
@@ -132,30 +134,68 @@ namespace Pixi
             }
 
 
-            /* public static void CreateSaveBitmap(Canvas canvas, string filename)
+             public static void CreateSaveDialog()
              {
-                 RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
-                 (int)canvas.Width, (int)canvas.Height,
-                 96d, 96d, PixelFormats.Pbgra32);
-                 // needed otherwise the image output is black
-                 canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
-                 canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
+                 SaveFileDialog saveLocationDialog = new SaveFileDialog
+                {
+                    Title = "Save location",
+                    CheckPathExists = true,
+                    AddExtension = true,
+                    Filter = "All files (*.*)|*.*|PNG (*.png)|*.png",
+                    DefaultExt = "png",
+                    
+                };
+                saveLocationDialog.ShowDialog();
+                saveLocationDialog.FileOk += SaveLocationDialog_FileOk;
+                fileName = saveLocationDialog.FileName;
+                if (fileName != "")
+                {
+                    MainWindow.saveButton.IsEnabled = true;
+                    SaveCanvasAsPng();
+                }
+            }
 
-                 renderBitmap.Render(canvas);
+            private static void SaveLocationDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+            {
+            }
 
-                 //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-                 PngBitmapEncoder encoder = new PngBitmapEncoder();
-                 encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
 
-                 using (FileStream file = File.Create(filename))
-                 {
-                     encoder.Save(file);
-                 }
+            public static void SaveCanvasAsPng()
+            {
+                Rect bounds = VisualTreeHelper.GetDescendantBounds(PixiManager.mainPanel);
+                double dpi = 96d;
 
-             }
-             */
 
+                RenderTargetBitmap rtb = new RenderTargetBitmap(PixiManager.drawAreaSize, PixiManager.drawAreaSize, dpi, dpi, PixelFormats.Default);
+
+
+                DrawingVisual dv = new DrawingVisual();
+                using (DrawingContext dc = dv.RenderOpen())
+                {
+                    VisualBrush vb = new VisualBrush(PixiManager.mainPanel);
+                    dc.DrawRectangle(vb, null, new Rect(new Point(), new Size(PixiManager.drawAreaSize, PixiManager.drawAreaSize)));
+                }
+
+                rtb.Render(dv);
+                BitmapEncoder pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(rtb));
+
+                try
+                {
+                    MemoryStream ms = new MemoryStream();
+
+                    pngEncoder.Save(ms);
+                    ms.Close();
+
+                    File.WriteAllBytes(fileName, ms.ToArray());
+                }
+                catch (Exception err)
+                {
+                    System.Windows.MessageBox.Show(err.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
         }
     }
-}
+
 

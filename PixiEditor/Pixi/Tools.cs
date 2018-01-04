@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
-using Pixi.Settings;
+using Pixi.Shortcuts;
 using System.Windows.Resources;
 
 namespace Pixi
@@ -24,13 +24,16 @@ namespace Pixi
             private static Rectangle selectedRectangle;                                          //rectangle that is selected
             public enum AvailableTools
             {
-                Pen = 0, FillBucket = 1,
+                Pen = 0,
+                FillBucket = 1,
+                ColorPicker = 2,
             }
 
             //On application start
             public static void OnStart()
             {              
-                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);              
+                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);
+                MainWindow.saveButton.IsEnabled = false;
             }
 
             //when draw area is created
@@ -74,6 +77,29 @@ namespace Pixi
                     }
                 }
             }
+
+            public static void ColorPickerTool(bool setSecondColor)
+            {
+                if (selectedTool == AvailableTools.ColorPicker)
+                {
+                    if (setSecondColor == true)
+                    {
+                        secondColor = selectedRectangle.Fill;
+                        ToolSettings.secondColorRectangle.Fill = selectedRectangle.Fill;
+                        SolidColorBrush fieldColor = (SolidColorBrush)selectedRectangle.Fill;
+                        Color fieldColorColor = fieldColor.Color;
+                        MainWindow.secondColorPicker.SelectedColor = fieldColorColor;
+                    }
+                    else
+                    {
+                        firstColor = selectedRectangle.Fill;
+                        ToolSettings.firstColorRectangle.Fill = selectedRectangle.Fill;
+                        SolidColorBrush fieldColor = (SolidColorBrush)selectedRectangle.Fill;
+                        Color fieldColorColor = fieldColor.Color;
+                        MainWindow.firstColorPicker.SelectedColor = fieldColorColor;
+                    }
+                }
+            }
             //Check what tool is selected
             private static void CheckTool()
             {
@@ -85,6 +111,7 @@ namespace Pixi
                 {
                     FloodFIll(PixiManager.GetFieldX(selectedRectangle), PixiManager.GetFieldY(selectedRectangle), pickedColor, selectedRectangle.Fill);
                 }
+
             }
             //Set color
             public static void SetColor(bool selectFirstColor)
@@ -100,11 +127,14 @@ namespace Pixi
             }
 
             #region events
+           
 
             private static void Field_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
             {
+
                 selectedRectangle = (Rectangle)(e.Source as FrameworkElement);
                 SetColor(false);
+                ColorPickerTool(true);
                 CheckTool();
             }
 
@@ -112,15 +142,16 @@ namespace Pixi
             {
                 selectedRectangle = (Rectangle)(e.Source as FrameworkElement);
                 SetColor(true);
+                ColorPickerTool(false);
                 CheckTool();
             }
 
             private static void Field_MouseEnter(object sender, MouseEventArgs e)
-            {
+            {               
                 mouseOnRectangle = (Rectangle)(e.Source as FrameworkElement);
-                mouseOnRectangle.Stroke = Brushes.Black;
+                mouseOnRectangle.Stroke = Brushes.Black;     
                 mouseOnRectangle.StrokeThickness = 0.5f;
-                if(e.LeftButton == MouseButtonState.Pressed)
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     selectedRectangle = (Rectangle)(e.Source as FrameworkElement);
                     SetColor(true);

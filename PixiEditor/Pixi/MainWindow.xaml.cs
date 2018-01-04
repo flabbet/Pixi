@@ -16,7 +16,8 @@ using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.DataGrid;
 using pM = Pixi.PixiManager;
 using Pixi.FieldTools;
-using Pixi.Settings;
+using Pixi.Shortcuts;
+using Microsoft.Win32;
 
 namespace Pixi
 {
@@ -29,6 +30,7 @@ namespace Pixi
         public static Border transparentBackground;
         public static Grid primaryGrid;
         public static ListView menuslistView;
+        public static Button saveButton;
         public static ColorPicker firstColorPicker, secondColorPicker;
         public MainWindow()
         {
@@ -38,6 +40,7 @@ namespace Pixi
             activeCursor = this.Cursor;
             primaryGrid = MainGrid;
             transparentBackground = CanvasBackground;
+            saveButton = SaveButton;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
             ToolSettings.firstColorRectangle = FirstColorRectangle;
@@ -47,20 +50,47 @@ namespace Pixi
             Tools.OnStart();
         }
 
+
+        #region Tools
         private void FillButton_Click(object sender, RoutedEventArgs e)
         {
             Tools.selectedTool = Tools.AvailableTools.FillBucket;
         }
 
-        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+
+        private void DrawButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Source == FirstColorPicker)
+            Tools.selectedTool = Tools.AvailableTools.Pen;
+        }
+
+        private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.ColorPicker;
+        }
+
+        #endregion
+
+        #region Menu buttons
+
+        //creates size chooser popup 
+        private void NewFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            menuslistView.Visibility = Visibility.Collapsed;
+            ToolSettings.CreateSizePopup();
+        }
+
+        //Save button
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == SaveButton)
             {
-                ToolSettings.SetColorsToDraw(true);
+                menuslistView.Visibility = Visibility.Collapsed;
+                ToolSettings.SaveCanvasAsPng();
             }
             else
-            {
-                ToolSettings.SetColorsToDraw(false);
+            {       
+                menuslistView.Visibility = Visibility.Collapsed;
+                ToolSettings.CreateSaveDialog();
             }
         }
 
@@ -80,26 +110,24 @@ namespace Pixi
                 listViewToOpenClose.Visibility = Visibility.Collapsed;
             }
         }
-        //creates size chooser popup 
-        private void NewFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            menuslistView.Visibility = Visibility.Collapsed;
-            ToolSettings.CreateSizePopup();
-        }
 
-        private void DrawButton_Click(object sender, RoutedEventArgs e)
-        {
-            Tools.selectedTool = Tools.AvailableTools.Pen;
-        }
 
-       
-        //Save button
-       /* private void SaveButton_Click(object sender, RoutedEventArgs e)
+
+        #endregion
+
+        #region Other
+        private void ColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
-            ToolSettings.CreateSaveBitmap(MainPanel, @"D:\temp\test image.png");
+            if (e.Source == FirstColorPicker)
+            {
+                ToolSettings.SetColorsToDraw(true);
+            }
+            else
+            {
+                ToolSettings.SetColorsToDraw(false);
+            }
         }
-        */
-        
-        
+        #endregion
+
     }
 }

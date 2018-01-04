@@ -22,10 +22,11 @@ namespace Pixi
         public static Canvas mainPanel;
         public static Rectangle cloneCopy;
         public static int drawAreaSize;
+        public static double fieldSize;
         public static List<Rectangle> fields = new List<Rectangle>();
 
         public static void CreateDrawArea(int size)
-        {
+        {            
             if(size > 1024)
             {
                MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure you want to create such a large canvas? This process may take long time or even crash Pixi", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning, defaultResult: MessageBoxResult.No);
@@ -34,13 +35,14 @@ namespace Pixi
             drawAreaSize = size;
             int timesDone = 0;
             int toSpace = 0;
+            fieldSize = mainPanel.Height / size;
             for (int i = 0; i< size * size; i++)
             {                             
                 Rectangle clone = new Rectangle();          
                 clone.Name = "fieldCopyNumber" + i;
                 cloneCopy = clone;
-                clone.Height = mainPanel.Height / size;
-                clone.Width = mainPanel.Width / size;
+                clone.Height = fieldSize;
+                clone.Width = fieldSize;
                 if (timesDone == size)
                 {
                     toSpace++;
