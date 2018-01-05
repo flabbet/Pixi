@@ -18,8 +18,8 @@ namespace Pixi
         class Tools
         {
             public static  AvailableTools selectedTool = AvailableTools.Pen;                    //selected tool variable
-            private static Brush pickedColor;                                                    //color that will be applied
-            public static Brush firstColor = Brushes.Black, secondColor = Brushes.Transparent;    //first and second color triggered to two mouse buttons
+            private static Brush pickedColor;                                                    //newColor that will be applied
+            public static Brush firstColor = Brushes.Black, secondColor = Brushes.Transparent;    //first and second newColor triggered to two mouse buttons
             private static Rectangle mouseOnRectangle;
             private static Rectangle selectedRectangle;                                          //rectangle that is selected
             public enum AvailableTools
@@ -31,8 +31,7 @@ namespace Pixi
 
             //On application start
             public static void OnStart()
-            {              
-                MessageBox.Show("Every feature works with 64 x 64 or less canvas size, with bigger size some features may crash Pixi.", "Alpha build note", MessageBoxButton.OK, MessageBoxImage.Information);
+            {                            
                 MainWindow.saveButton.IsEnabled = false;
             }
 
@@ -46,25 +45,27 @@ namespace Pixi
             }
 
             //Flood fill alghoritm
-            public static void FloodFIll(int x, int y, Brush color, Brush colorToReplace)
-            {
-                if (selectedTool == AvailableTools.FillBucket)
-                {
-                    if (x < 1 || x > PixiManager.drawAreaSize) return;
-                    if (y < 1 || y > PixiManager.drawAreaSize) return;
+            public static void FloodFIll(int x, int y, Brush newColor, Brush colorToReplace)
+            {                
+                    var stack = new Stack<Tuple<int, int>>();
+                    stack.Push(Tuple.Create(x, y));
 
-                    if (PixiManager.FieldCords(x, y).Fill != color)
+                    while (stack.Count > 0)
                     {
-                        if (PixiManager.FieldCords(x, y).Fill == colorToReplace)
+                        var point = stack.Pop();
+                        if (point.Item1 < 1 || point.Item1 > PixiManager.drawAreaSize) continue;
+                        if (point.Item2 < 1 || point.Item2 > PixiManager.drawAreaSize) continue;
+                        if (PixiManager.FieldCords(point.Item1, point.Item2).Fill == newColor) continue;
+
+                        if (PixiManager.FieldCords(point.Item1, point.Item2).Fill == colorToReplace)
                         {
-                            PixiManager.FieldCords(x, y).Fill = color;
-                                FloodFIll(x,y-1, color, colorToReplace);
-                                FloodFIll(x+1, y, color, colorToReplace);
-                                FloodFIll(x, y+1, color, colorToReplace);
-                                FloodFIll(x-1,y, color, colorToReplace);
+                            PixiManager.FieldCords(point.Item1, point.Item2).Fill = newColor;
+                            stack.Push(Tuple.Create(point.Item1, point.Item2 - 1));
+                            stack.Push(Tuple.Create(point.Item1 + 1, point.Item2));
+                            stack.Push(Tuple.Create(point.Item1, point.Item2 + 1));
+                            stack.Push(Tuple.Create(point.Item1 - 1, point.Item2));
                         }
-                    }
-                }
+                    }                              
             }
             //draw tool
             public static void Draw(Rectangle fieldToColor, Brush color)
@@ -73,7 +74,15 @@ namespace Pixi
                 {
                     if (fieldToColor.Fill != color)
                     {
-                        fieldToColor.Fill = color;
+                        if (fieldToColor.Fill != Brushes.Transparent && color == Brushes.Transparent)
+                        {
+                            PixiManager.coloredFileds.Remove(fieldToColor);
+                        }
+                        if (color != Brushes.Transparent)
+                        {
+                            PixiManager.coloredFileds.Add(fieldToColor);
+                        }
+                        fieldToColor.Fill = color;                                            
                     }
                 }
             }
@@ -102,7 +111,7 @@ namespace Pixi
             }
             //Check what tool is selected
             private static void CheckTool()
-            {
+            {             
                 if(selectedTool == AvailableTools.Pen)
                 {
                     Draw(selectedRectangle, pickedColor);
@@ -113,7 +122,7 @@ namespace Pixi
                 }
 
             }
-            //Set color
+            //Set newColor
             public static void SetColor(bool selectFirstColor)
             {            
                 if (selectFirstColor == true)

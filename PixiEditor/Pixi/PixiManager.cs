@@ -24,6 +24,7 @@ namespace Pixi
         public static int drawAreaSize;
         public static double fieldSize;
         public static List<Rectangle> fields = new List<Rectangle>();
+        public static List<Rectangle> coloredFileds = new List<Rectangle>();
 
         public static void CreateDrawArea(int size)
         {            
