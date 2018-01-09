@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FileMenu.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Shortcuts.cs" />
     <Compile Include="Tools.cs" />

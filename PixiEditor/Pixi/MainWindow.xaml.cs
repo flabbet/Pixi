@@ -16,8 +16,9 @@ using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.DataGrid;
 using pM = Pixi.PixiManager;
 using Pixi.FieldTools;
-using Pixi.Shortcuts;
+using Pixi.Settings;
 using Microsoft.Win32;
+using System.Windows.Controls.Primitives;
 
 namespace Pixi
 {
@@ -31,6 +32,8 @@ namespace Pixi
         public static Grid primaryGrid;
         public static ListView menuslistView;
         public static Button saveButton;
+        public static DockPanel popUpsArea;
+        public static Button saveAsButton;
         public static ColorPicker firstColorPicker, secondColorPicker;
         public MainWindow()
         {
@@ -40,7 +43,9 @@ namespace Pixi
             activeCursor = this.Cursor;
             primaryGrid = MainGrid;
             transparentBackground = CanvasBackground;
+            popUpsArea = PopUpsArea;
             saveButton = SaveButton;
+            saveAsButton = SaveAsButton;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
             ToolSettings.firstColorRectangle = FirstColorRectangle;
@@ -68,6 +73,11 @@ namespace Pixi
             Tools.selectedTool = Tools.AvailableTools.ColorPicker;
         }
 
+        private void EarseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Earse;
+        }
+
         #endregion
 
         #region Menu buttons
@@ -76,7 +86,7 @@ namespace Pixi
         private void NewFileButton_Click(object sender, RoutedEventArgs e)
         {
             menuslistView.Visibility = Visibility.Collapsed;
-            ToolSettings.CreateSizePopup();
+            FileMenu.CreateSizePopup();
         }
 
         //Save button
@@ -85,12 +95,12 @@ namespace Pixi
             if (sender == SaveButton)
             {
                 menuslistView.Visibility = Visibility.Collapsed;
-                ToolSettings.SaveCanvasAsPng();
+                FileMenu.SaveCanvasAsPng();
             }
             else
             {       
                 menuslistView.Visibility = Visibility.Collapsed;
-                ToolSettings.CreateSaveDialog();
+                FileMenu.CreateSaveDialog();
             }
         }
 
@@ -110,8 +120,6 @@ namespace Pixi
                 listViewToOpenClose.Visibility = Visibility.Collapsed;
             }
         }
-
-
 
         #endregion
 

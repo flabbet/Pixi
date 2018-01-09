@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
-using Pixi.Shortcuts;
+using Pixi.Settings;
 using System.Windows.Resources;
 
 namespace Pixi
@@ -27,6 +27,7 @@ namespace Pixi
                 Pen = 0,
                 FillBucket = 1,
                 ColorPicker = 2,
+                Earse = 3,
             }
 
             //On application start
@@ -46,7 +47,8 @@ namespace Pixi
 
             //Flood fill alghoritm
             public static void FloodFIll(int x, int y, Brush newColor, Brush colorToReplace)
-            {                
+            {              
+
                     var stack = new Stack<Tuple<int, int>>();
                     stack.Push(Tuple.Create(x, y));
 
@@ -73,16 +75,8 @@ namespace Pixi
                 if (selectedTool == AvailableTools.Pen)
                 {
                     if (fieldToColor.Fill != color)
-                    {
-                        if (fieldToColor.Fill != Brushes.Transparent && color == Brushes.Transparent)
-                        {
-                            PixiManager.coloredFileds.Remove(fieldToColor);
-                        }
-                        if (color != Brushes.Transparent)
-                        {
-                            PixiManager.coloredFileds.Add(fieldToColor);
-                        }
-                        fieldToColor.Fill = color;                                            
+                    {                       
+                            fieldToColor.Fill = color;                      
                     }
                 }
             }
@@ -109,6 +103,12 @@ namespace Pixi
                     }
                 }
             }
+
+            public static void EarseTool(Rectangle fieldToOperateOn)
+            {
+                fieldToOperateOn.Fill = Brushes.Transparent;
+            }
+
             //Check what tool is selected
             private static void CheckTool()
             {             
@@ -119,6 +119,10 @@ namespace Pixi
                 else if(selectedTool == AvailableTools.FillBucket)
                 {
                     FloodFIll(PixiManager.GetFieldX(selectedRectangle), PixiManager.GetFieldY(selectedRectangle), pickedColor, selectedRectangle.Fill);
+                }
+                else if(selectedTool == AvailableTools.Earse)
+                {
+                    EarseTool(selectedRectangle);
                 }
 
             }

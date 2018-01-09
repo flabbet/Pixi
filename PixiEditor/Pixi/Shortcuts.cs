@@ -16,7 +16,7 @@ using Pixi.FieldTools;
 
 namespace Pixi
 {
-    namespace Shortcuts
+    namespace Settings
     { 
         class Shortcut
         {
