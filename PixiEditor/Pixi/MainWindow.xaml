@@ -8,27 +8,70 @@
         xmlns:local="clr-namespace:Pixi"
         xmlns:input="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         mc:Ignorable="d"
-        Title="Pixi" Height="1000" Width="1300" Background="#FF252424">
+        Title="Pixi" Height="1000" Width="1600" Background="#FF252424">
+    <Window.Resources>
+        <RoutedUICommand x:Key="PenTool" Text="Setting pen tool" />
+        <RoutedUICommand x:Key="FillTool" Text="Setting fill tool" />
+        <RoutedUICommand x:Key="EarseTool" Text="Setting earse tool" />
+        <RoutedUICommand x:Key="ColorPickerTool" Text="Setting ColorPicker tool" />
+    </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource PenTool}" 
+                    Executed="PenTool_Shortcut" />
+        <CommandBinding Command="{StaticResource FillTool}" 
+                    Executed="FillTool_Shortcut" />
+        <CommandBinding Command="{StaticResource EarseTool}" 
+                    Executed="EarseTool_Shortcut" />
+        <CommandBinding Command="{StaticResource ColorPickerTool}" 
+                    Executed="ColorPicker_Shortcut" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="P" Command="{StaticResource PenTool}" />
+        <KeyBinding Key="F" Command="{StaticResource FillTool}" />
+        <KeyBinding Key="E" Command="{StaticResource EarseTool}" />
+        <KeyBinding Key="R" Command="{StaticResource ColorPickerTool}" />
+    </Window.InputBindings>
+
     <Grid Name="MainGrid">
         <Border HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
-            <Border Margin="119,9" Background="DimGray">
+            <Border Margin="123,9,140,9" Background="DimGray">
                 <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="816" Height="816" Margin="10,29,10,10" Visibility="Hidden" Name="CanvasBackground">
                     <Border.Background>
                         <ImageBrush ImageSource="Images/transparent bg.png" Stretch="UniformToFill" Opacity="0.2"/>
                     </Border.Background>
-                    <Canvas
+                    <xctk:Zoombox MinScale="1" MaxScale="10" IsAnimated="False" KeepContentInBounds="True" CurrentViewChanged="Zoombox_CurrentViewChanged">
+                        <Canvas
 				Width="816" Height="816" Name="MainPanel"/>
+                    </xctk:Zoombox>
                 </Border>
             </Border>
         </Border>
-        <DockPanel Name="PopUpsArea" HorizontalAlignment="Center" VerticalAlignment="Center" Height="400" Width="500"/>
-        
-        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="128" Margin="0,41,0,0" Background="#FF363434" Name="ToolBar">
-            <Border BorderThickness="1" BorderBrush="Gray" Margin="0,-3,0,0"></Border>
-            <Button Content="Pen" HorizontalAlignment="Left" Margin="19,10,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="DrawButton_Click" ToolTip="Pen tool, used to paint (P)"/>
-            <Button Content="Fill" HorizontalAlignment="Left" Margin="19,53,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="FillButton_Click" ToolTip="Fill bucket, used to cover area in color (F)"/>
-            <Button Content="Color Picker" HorizontalAlignment="Left" Margin="19,96,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="ColorPickerButton_Click" ToolTip="Color picker, used to pick color from field (R)"/>
-            <Button Content="Earse" HorizontalAlignment="Left" Margin="19,139,0,0" VerticalAlignment="Top" Width="88" Height="38" Click="EarseButton_Click" ToolTip="Earse tool, used to earse colors from fields (E)"/>
+        <Canvas Name="PopUpsArea" HorizontalAlignment="Center" VerticalAlignment="Center" Height="150" Width="400" Margin="447,362,445,457"/>
+
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="128" Margin="0,38,0,0" Background="#FF363434" Name="ToolBar">
+            <Border BorderThickness="0" BorderBrush="Gray" Margin="0,-3,0,0"></Border>
+            <Button  HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="52" Height="52" Click="DrawButton_Click" ToolTip="Pen tool, used to paint (P)" >
+                <input:Button.Background>
+                    <input:ImageBrush ImageSource="Images/Pen Image.png" Stretch="Uniform"/>
+                </input:Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Left" Margin="67,10,0,0" VerticalAlignment="Top" Width="52" Height="52" Click="FillButton_Click" ToolTip="Fill bucket, used to cover area in color (F)">
+                <input:Button.Background>
+                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/Bucket image.png"/>
+                </input:Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Left" Margin="67,67,0,0" VerticalAlignment="Top" Width="52" Height="52" Click="ColorPickerButton_Click" ToolTip="Color picker, used to pick color from field (R)">
+                <input:Button.Background>
+                    <input:ImageBrush ImageSource="Images/Pipette image.png" Stretch="Uniform"/>
+                </input:Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="52" Height="52" Click="EarseButton_Click" ToolTip="Earse tool, used to earse colors from fields (E)">
+                <input:Button.Background>
+                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/Earser image.png"/>
+                </input:Button.Background>
+            </Button>
             <!--Color choosing-->
             <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="19,0,0,51" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
             <xctk:ColorPicker Width="50" Height="50" Margin="19,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="HueSaturationBrightness" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
@@ -38,15 +81,15 @@
 
         <!--Menus-->
         <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="446">
-            <Border BorderBrush="Gray" BorderThickness="1" VerticalAlignment="Top" Height="28" Background="#FF363434"></Border>
+            <Border BorderBrush="Gray" BorderThickness="0" VerticalAlignment="Top" Height="28" Background="#FF363434"></Border>
             <Button Height="28" Width="50" Content="File" VerticalAlignment="Top" HorizontalAlignment="Left" Click="MenuButton_Click" Name="File" Background="Transparent" Foreground="Snow" BorderThickness="0"/>
             <ListView Height="300" Width="200" Margin="0,28,0,0" Background="White" Visibility="Collapsed" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="1" BorderBrush="Black" Name="FileListView">
-            <Button Content="   New...                         CTRL + N" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="NewFileButton_Click"/>
-            <Button Content="   Save...                        CTRL + S" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="SaveButton_Click" Name="SaveButton"/>
-            <Button Content="   Save As...                             " HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" IsEnabled="False" Click="SaveButton_Click" Name="SaveAsButton"/>
-        </ListView>
+                <Button Content="   New...                         CTRL + N" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="NewFileButton_Click" Name="NewFileButton"/>
+                <Button Content="   Save...                        CTRL + S" HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="SaveButton_Click" Name="SaveButton"/>
+                <Button Content="   Save As...                             " HorizontalContentAlignment="Left"  Width="186" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" IsEnabled="False" Click="SaveButton_Click" Name="SaveAsButton"/>
+            </ListView>
         </Grid>
-        
+
     </Grid>
 </Window>
 

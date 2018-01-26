@@ -14,11 +14,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using Xceed.Wpf.DataGrid;
-using pM = Pixi.PixiManager;
+using pM = Pixi.DrawArea;
 using Pixi.FieldTools;
 using Pixi.Settings;
 using Microsoft.Win32;
 using System.Windows.Controls.Primitives;
+using Pixi.IO;
 
 namespace Pixi
 {
@@ -32,8 +33,9 @@ namespace Pixi
         public static Grid primaryGrid;
         public static ListView menuslistView;
         public static Button saveButton;
-        public static DockPanel popUpsArea;
+        public static Canvas popUpsArea;
         public static Button saveAsButton;
+        public static Button newButton;
         public static ColorPicker firstColorPicker, secondColorPicker;
         public MainWindow()
         {
@@ -44,14 +46,15 @@ namespace Pixi
             primaryGrid = MainGrid;
             transparentBackground = CanvasBackground;
             popUpsArea = PopUpsArea;
+            newButton = NewFileButton;
             saveButton = SaveButton;
             saveAsButton = SaveAsButton;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
-            ToolSettings.firstColorRectangle = FirstColorRectangle;
-            ToolSettings.secondColorRectangle = SecondColorRectangle;
-            ToolSettings.firstColorRectangle.Fill = Tools.firstColor;
-            ToolSettings.secondColorRectangle.Fill = Tools.secondColor;
+            ColorsManager.firstColorRectangle = FirstColorRectangle;
+            ColorsManager.secondColorRectangle = SecondColorRectangle;
+            ColorsManager.firstColorRectangle.Fill = new SolidColorBrush(Tools.firstColor);
+            ColorsManager.secondColorRectangle.Fill = new SolidColorBrush(Tools.secondColor);
             Tools.OnStart();
         }
 
@@ -78,6 +81,11 @@ namespace Pixi
             Tools.selectedTool = Tools.AvailableTools.Earse;
         }
 
+        private void Zoombox_CurrentViewChanged(object sender, Xceed.Wpf.Toolkit.Zoombox.ZoomboxViewChangedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Zoom;
+        }
+
         #endregion
 
         #region Menu buttons
@@ -86,7 +94,7 @@ namespace Pixi
         private void NewFileButton_Click(object sender, RoutedEventArgs e)
         {
             menuslistView.Visibility = Visibility.Collapsed;
-            FileMenu.CreateSizePopup();
+            NewFile file = new NewFile();
         }
 
         //Save button
@@ -95,12 +103,12 @@ namespace Pixi
             if (sender == SaveButton)
             {
                 menuslistView.Visibility = Visibility.Collapsed;
-                FileMenu.SaveCanvasAsPng();
+                SaveFile file = new SaveFile(false);
             }
             else
             {       
                 menuslistView.Visibility = Visibility.Collapsed;
-                FileMenu.CreateSaveDialog();
+                SaveFile file = new SaveFile(true);
             }
         }
 
@@ -120,6 +128,27 @@ namespace Pixi
                 listViewToOpenClose.Visibility = Visibility.Collapsed;
             }
         }
+        #region Shortcuts
+        private void PenTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Pen;
+        }
+
+        private void FillTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.FillBucket;
+        }
+
+        private void EarseTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.Earse;
+        }
+
+        private void ColorPicker_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            Tools.selectedTool = Tools.AvailableTools.ColorPicker;
+        }
+        #endregion
 
         #endregion
 
@@ -128,11 +157,11 @@ namespace Pixi
         {
             if (e.Source == FirstColorPicker)
             {
-                ToolSettings.SetColorsToDraw(true);
+                ColorsManager.SetColorsToDraw(true);
             }
             else
             {
-                ToolSettings.SetColorsToDraw(false);
+                ColorsManager.SetColorsToDraw(false);
             }
         }
         #endregion
