@@ -110,9 +110,9 @@ namespace Pixi
                 MainWindow.transparentBackground.Visibility = Visibility.Visible;
                 if(DrawArea.layers.Count > 0)
                 {
-                    DrawArea.Delete();
+                    DrawArea.Delete(DrawArea.image);
                 }
-                DrawArea.Create(size);
+                DrawArea layer = new DrawArea(size);
             }
         }
     }

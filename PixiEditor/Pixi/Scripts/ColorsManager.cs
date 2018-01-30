@@ -38,6 +38,18 @@ namespace Pixi
                 
               
             }
+
+            public static Color SetColor(bool selectFirstColor, Color pickedColor)
+            {
+                if (selectFirstColor == true)
+                {
+                    return Tools.firstColor;
+                }
+                else
+                {
+                    return Tools.secondColor;
+                }
+            }
         }
     }
 }

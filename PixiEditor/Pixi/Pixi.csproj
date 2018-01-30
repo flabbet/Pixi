@@ -110,8 +110,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Scripts\Action.cs" />
     <Compile Include="Scripts\ColorsManager.cs" />
+    <Compile Include="Scripts\Layer.cs" />
     <Compile Include="Scripts\NewFile.cs" />
+    <Compile Include="Scripts\OpenFile.cs" />
     <Compile Include="Scripts\SaveFile.cs" />
     <Compile Include="Scripts\Tools.cs" />
     <Page Include="MainWindow.xaml">

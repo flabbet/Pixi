@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Pixi.Actions;
+using Pixi.Core;
 using Pixi.FieldTools;
 
 
@@ -21,13 +23,13 @@ namespace Pixi
     {
         public static Canvas mainPanel;
         public static int areaSize;
-        public static WriteableBitmap drawAreaWBitmap;
         public static Image image;
-        public static List<Image> layers = new List<Image>();
+        public static List<Layer> layers = new List<Layer>();
+        public static Layer activeLayer;
 
-        public static void Create(int size)
+        public DrawArea(int size)
         {
-            drawAreaWBitmap = BitmapFactory.New(size, size);
+            WriteableBitmap drawAreaWBitmap = BitmapFactory.New(size, size);
             image = new Image();
             RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
             RenderOptions.SetEdgeMode(image, EdgeMode.Aliased);
@@ -40,13 +42,16 @@ namespace Pixi
             areaSize = size;
             MainWindow.saveAsButton.IsEnabled = true;
             Tools.OnDrawAreaCreated(image);
-            layers.Add(image);
+            Layer layer = new Layer(drawAreaWBitmap, image);
+            activeLayer = layer;
+            layers.Add(layer);
+            Actions.Action action = new Actions.Action(layer);
         }
 
-        public static void Delete()
+        public static void Delete(Image drawArea)
         {
             layers.Clear();
             mainPanel.Children.Clear();
-        }       
+        }
     }
 }

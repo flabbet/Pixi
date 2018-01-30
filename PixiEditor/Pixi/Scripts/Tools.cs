@@ -28,6 +28,7 @@ namespace Pixi
                 ColorPicker = 2,
                 Earse = 3, 
                 Zoom = 4,
+                Line = 5,
             }
 
             //On application start
@@ -42,14 +43,15 @@ namespace Pixi
                 image.MouseMove += Image_MouseMove;
                 image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
                 image.MouseRightButtonDown += Image_MouseRightButtonDown;
+                image.MouseUp += Image_MouseUp;
             }
 
 
 
             //Flood fill alghoritm
-             public static void FloodFIll(int x,int y,Color newColor, Color colorToReplace)
+            public static void FloodFIll(int x,int y,Color newColor, Color colorToReplace)
             {
-                if (DrawArea.drawAreaWBitmap.GetPixel(x, y).ToString() == "#00000000" && newColor == Colors.Transparent) return;
+                if (DrawArea.activeLayer.LayerBitmap.GetPixel(x, y).ToString() == "#00000000" && newColor == Colors.Transparent) return;
 
                      var stack = new Stack<Tuple<int, int>>();
                      stack.Push(Tuple.Create(x, y));
@@ -59,11 +61,11 @@ namespace Pixi
                          var point = stack.Pop();
                          if (point.Item1 < 0 || point.Item1 > DrawArea.areaSize-1) continue;
                          if (point.Item2 < 0 || point.Item2 > DrawArea.areaSize-1) continue;
-                         if (DrawArea.drawAreaWBitmap.GetPixel(point.Item1, point.Item2) == newColor) continue;
+                         if (DrawArea.activeLayer.LayerBitmap.GetPixel(point.Item1, point.Item2) == newColor) continue;
 
-                         if (DrawArea.drawAreaWBitmap.GetPixel(point.Item1, point.Item2) == colorToReplace)
+                         if (DrawArea.activeLayer.LayerBitmap.GetPixel(point.Item1, point.Item2) == colorToReplace)
                          {
-                             DrawArea.drawAreaWBitmap.SetPixel(point.Item1, point.Item2, newColor);
+                             DrawArea.activeLayer.LayerBitmap.SetPixel(point.Item1, point.Item2, newColor);
                              stack.Push(Tuple.Create(point.Item1, point.Item2 - 1));
                              stack.Push(Tuple.Create(point.Item1 + 1, point.Item2));
                              stack.Push(Tuple.Create(point.Item1, point.Item2 + 1));
@@ -93,12 +95,12 @@ namespace Pixi
                     int yRelativeToPixelSize = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
                     if (setSecondColor == true)
                     {
-                        secondColor = DrawArea.drawAreaWBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
+                        secondColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
                         MainWindow.secondColorPicker.SelectedColor = secondColor;
                     }
                     else
                     {
-                        firstColor = DrawArea.drawAreaWBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);                      
+                        firstColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);                      
                         MainWindow.firstColorPicker.SelectedColor = firstColor;
                     }
                 }
@@ -112,73 +114,80 @@ namespace Pixi
                 fieldToOperateOn.SetPixel(xRelativeToPixelSize, yRelativeToPixelSize, Colors.Transparent);
             }
 
+            public static void LineTool()
+            {
+                
+            }
+
             //Check what tool is selected
             private static void CheckTool(bool senderIsRightMouseButton, bool onlyClicked = false)
             {             
                 if(selectedTool == AvailableTools.Pen)
                 {
-                    Draw(DrawArea.drawAreaWBitmap, pickedColor);
+                    Draw(DrawArea.activeLayer.LayerBitmap, pickedColor);
                 }
                 else if(selectedTool == AvailableTools.FillBucket && onlyClicked == true)
                 {
                     Point position = Mouse.GetPosition(DrawArea.image);
                     int xRelativeToPixelSize = (int)(position.X / (DrawArea.image.Height / DrawArea.areaSize));
                     int yRelativeToPixelSize = (int)(position.Y / (DrawArea.image.Height / DrawArea.areaSize));
-                    Color colorToReplace = DrawArea.drawAreaWBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
-                    if (DrawArea.drawAreaWBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize) == pickedColor) return;
+                    Color colorToReplace = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
+                    if (DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize) == pickedColor) return;
                     FloodFIll(xRelativeToPixelSize,yRelativeToPixelSize, pickedColor, colorToReplace);
                 }
                 else if(selectedTool == AvailableTools.Earse)
                 {
-                    EarseTool(DrawArea.drawAreaWBitmap);
+                    EarseTool(DrawArea.activeLayer.LayerBitmap);
                 }
                 else if(selectedTool == AvailableTools.ColorPicker)
                 {
                     ColorPickerTool(senderIsRightMouseButton);
                 }
+                else if(selectedTool == AvailableTools.Line)
+                {
+                    LineTool();
+                }
 
-            }
-            //Set newColor
-            public static void SetColor(bool selectFirstColor)
-            {            
-                if (selectFirstColor == true)
-                {
-                    pickedColor = firstColor;
-                }
-                else
-                {
-                    pickedColor = secondColor;
-                }
+            }            
+
+            private static void HighlightField()
+            {
             }
 
             #region events
 
             private static void Image_MouseMove(object sender, MouseEventArgs e)
-            {
-                if(e.LeftButton == MouseButtonState.Pressed)
+            {           
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    SetColor(true);
+                    pickedColor = ColorsManager.SetColor(true,pickedColor);
                     CheckTool(false);
                 }
                 else if(e.RightButton == MouseButtonState.Pressed)
                 {
-                    SetColor(false);
+                    pickedColor = ColorsManager.SetColor(false, pickedColor);
                     CheckTool(true);
                 }
             }
 
             private static void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
             {
-                SetColor(true);
+                pickedColor = ColorsManager.SetColor(true, pickedColor);
                 CheckTool(false, onlyClicked: true);
             }
 
 
             private static void Image_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
             {
-                SetColor(false);
+                pickedColor = ColorsManager.SetColor(false, pickedColor);
                 CheckTool(true, onlyClicked: true);
-            }          
+            }
+
+            private static void Image_MouseUp(object sender, MouseButtonEventArgs e)
+            {
+                Actions.Action action = new Actions.Action(DrawArea.activeLayer);               
+            }
+
             #endregion
         }
     }
