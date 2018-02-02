@@ -119,6 +119,40 @@ namespace Pixi
 
         }
 
+
+        private void LineTool_Click(object sender, RoutedEventArgs e)
+        {
+            if (lastSelectedToolButton != null)
+            {
+                lastSelectedToolButton.BorderThickness = new Thickness(0);
+            }
+            Tools.selectedTool = Tools.AvailableTools.Line;
+            lastSelectedToolButton = LineToolButton;
+            lastSelectedToolButton.BorderThickness = new Thickness(2);
+        }
+
+        private void RectangleToolButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (lastSelectedToolButton != null)
+            {
+                lastSelectedToolButton.BorderThickness = new Thickness(0);
+            }
+            Tools.selectedTool = Tools.AvailableTools.Rectangle;
+            lastSelectedToolButton = sender as Button;
+            lastSelectedToolButton.BorderThickness = new Thickness(2);
+        }
+
+        private void CircleToolButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (lastSelectedToolButton != null)
+            {
+                lastSelectedToolButton.BorderThickness = new Thickness(0);
+            }
+            Tools.selectedTool = Tools.AvailableTools.Circle;
+            lastSelectedToolButton = sender as Button;
+            lastSelectedToolButton.BorderThickness = new Thickness(2);
+        }
+
         #endregion
 
         #region Menu buttons
@@ -232,7 +266,14 @@ namespace Pixi
             lastSelectedToolButton.BorderThickness = new Thickness(2);
         }
 
-        private void LineTool_Click(object sender, RoutedEventArgs e)
+        private void Undo_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (Actions.Action.prevousBitmapsList.Count < 2) return;
+
+                Actions.Action.Undo();            
+        }
+
+        private void LineTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
         {
             if (lastSelectedToolButton != null)
             {
@@ -241,14 +282,27 @@ namespace Pixi
             Tools.selectedTool = Tools.AvailableTools.Line;
             lastSelectedToolButton = LineToolButton;
             lastSelectedToolButton.BorderThickness = new Thickness(2);
-
         }
 
-        private void Undo_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        private void NewFile_Shortcut(object sender, ExecutedRoutedEventArgs e)
         {
-            if (Actions.Action.prevousBitmapsList.Count < 2) return;
+            if (NewFileButton.IsEnabled == true)
+            {
+                NewFile file = new NewFile();
+            }
+        }
 
-                Actions.Action.Undo();            
+        private void SaveFile_Shortcut(object sender, ExecutedRoutedEventArgs e)
+        {
+            
+            if (SaveButton.IsEnabled == true)
+            {
+                SaveFile file = new SaveFile(false);
+            }
+            else if(SaveAsButton.IsEnabled == true)
+            {
+                SaveFile file = new SaveFile(true);
+            }
         }
 
         #endregion

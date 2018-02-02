@@ -9,8 +9,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
 using Pixi.Settings;
+using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.DataGrid;
 using System.Windows.Resources;
 using System.Windows.Media.Imaging;
+using System.Threading;
 
 namespace Pixi
 {
@@ -20,6 +23,11 @@ namespace Pixi
         {
             public static AvailableTools selectedTool;                                          //selected tool variable
             private static Color pickedColor;                                                    //newColor that will be applied
+            public static int xCoords;
+            public static int yCoords;
+            private static bool mouseLeftClicked;
+            private static WriteableBitmap wb = null;
+            private static int clickedX, clickedY;
             public static Color firstColor = Colors.Black, secondColor = Colors.Transparent;   //first and second newColor triggered to two mouse buttons   
             public enum AvailableTools
             {
@@ -29,6 +37,9 @@ namespace Pixi
                 Earse = 3, 
                 Zoom = 4,
                 Line = 5,
+                Rectangle = 6,
+                Triangle = 7,
+                Circle = 8,
             }
 
             //On application start
@@ -44,8 +55,9 @@ namespace Pixi
                 image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
                 image.MouseRightButtonDown += Image_MouseRightButtonDown;
                 image.MouseUp += Image_MouseUp;
+                image.MouseLeave += Image_MouseLeave;
+                image.MouseEnter += Image_MouseEnter;
             }
-
 
 
             //Flood fill alghoritm
@@ -77,12 +89,8 @@ namespace Pixi
             public static void Draw(WriteableBitmap drawArea,Color color)
             {
                 if (selectedTool == AvailableTools.Pen)
-                {
-                    Point point = Mouse.GetPosition(DrawArea.image);
-                    int xRelativeToPixelSize = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
-                    int yRelativeToPixelSize = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
-                    
-                   drawArea.SetPixel(xRelativeToPixelSize, yRelativeToPixelSize, color);                    
+                {                
+                   drawArea.SetPixel(xCoords, yCoords, color);                    
                 }
             }
 
@@ -90,17 +98,14 @@ namespace Pixi
             {
                 if (selectedTool == AvailableTools.ColorPicker)
                 {
-                    Point point = Mouse.GetPosition(DrawArea.image);
-                    int xRelativeToPixelSize = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
-                    int yRelativeToPixelSize = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
                     if (setSecondColor == true)
                     {
-                        secondColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
+                        secondColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
                         MainWindow.secondColorPicker.SelectedColor = secondColor;
                     }
                     else
                     {
-                        firstColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);                      
+                        firstColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);                      
                         MainWindow.firstColorPicker.SelectedColor = firstColor;
                     }
                 }
@@ -108,15 +113,71 @@ namespace Pixi
 
             public static void EarseTool(WriteableBitmap fieldToOperateOn)
             {
-                Point point = Mouse.GetPosition(DrawArea.image);
-                int xRelativeToPixelSize = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
-                int yRelativeToPixelSize = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
-                fieldToOperateOn.SetPixel(xRelativeToPixelSize, yRelativeToPixelSize, Colors.Transparent);
+                fieldToOperateOn.SetPixel(xCoords, yCoords, Colors.Transparent);
+            }
+            public static void LineTool()              
+            {                     
+                if(wb != null)
+                {
+                    DrawArea.activeLayer.LayerBitmap.Clear();
+                    DrawArea.activeLayer.LayerBitmap.Blit(new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), wb, new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), WriteableBitmapExtensions.BlendMode.Additive);
+                }
+                wb = DrawArea.activeLayer.LayerBitmap.Clone();
+                DrawArea.activeLayer.LayerBitmap.DrawLineBresenham(clickedX, clickedY, xCoords, yCoords, pickedColor);
             }
 
-            public static void LineTool()
+            public static void RectangleTool()
             {
-                
+                if (wb != null)
+                {
+                    DrawArea.activeLayer.LayerBitmap.Clear();
+                    DrawArea.activeLayer.LayerBitmap.Blit(new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), wb, new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), WriteableBitmapExtensions.BlendMode.Additive);
+                }
+                wb = DrawArea.activeLayer.LayerBitmap.Clone();
+                if (clickedX > xCoords && clickedY > yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawRectangle(xCoords, yCoords, clickedX, clickedY, pickedColor);
+                }
+                else if (clickedX < xCoords && clickedY < yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawRectangle(clickedX, clickedY, xCoords, yCoords, pickedColor);
+                }
+                else if(clickedY > yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawRectangle(clickedX, yCoords, xCoords, clickedY, pickedColor);
+
+                }
+                else
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawRectangle(xCoords, clickedY, clickedX, yCoords, pickedColor);
+                }
+            }
+
+            public static void CircleTool()
+            {
+                if (wb != null)
+                {
+                    DrawArea.activeLayer.LayerBitmap.Clear();
+                    DrawArea.activeLayer.LayerBitmap.Blit(new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), wb, new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), WriteableBitmapExtensions.BlendMode.Additive);
+                }
+                wb = DrawArea.activeLayer.LayerBitmap.Clone();
+                if (clickedX > xCoords && clickedY > yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawEllipse(xCoords, yCoords, clickedX, clickedY, pickedColor);
+                }
+                else if (clickedX < xCoords && clickedY < yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawEllipse(clickedX, clickedY, xCoords, yCoords, pickedColor);
+                }
+                else if (clickedY > yCoords)
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawEllipse(clickedX, yCoords, xCoords, clickedY, pickedColor);
+
+                }
+                else
+                {
+                    DrawArea.activeLayer.LayerBitmap.DrawEllipse(xCoords, clickedY, clickedX, yCoords, pickedColor);
+                }
             }
 
             //Check what tool is selected
@@ -128,12 +189,9 @@ namespace Pixi
                 }
                 else if(selectedTool == AvailableTools.FillBucket && onlyClicked == true)
                 {
-                    Point position = Mouse.GetPosition(DrawArea.image);
-                    int xRelativeToPixelSize = (int)(position.X / (DrawArea.image.Height / DrawArea.areaSize));
-                    int yRelativeToPixelSize = (int)(position.Y / (DrawArea.image.Height / DrawArea.areaSize));
-                    Color colorToReplace = DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize);
-                    if (DrawArea.activeLayer.LayerBitmap.GetPixel(xRelativeToPixelSize, yRelativeToPixelSize) == pickedColor) return;
-                    FloodFIll(xRelativeToPixelSize,yRelativeToPixelSize, pickedColor, colorToReplace);
+                    Color colorToReplace = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
+                    if (DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords) == pickedColor) return;
+                    FloodFIll(xCoords,yCoords, pickedColor, colorToReplace);
                 }
                 else if(selectedTool == AvailableTools.Earse)
                 {
@@ -147,6 +205,14 @@ namespace Pixi
                 {
                     LineTool();
                 }
+                else if(selectedTool == AvailableTools.Rectangle)
+                {
+                    RectangleTool();
+                }
+                else if (selectedTool == AvailableTools.Circle)
+                {
+                    CircleTool();
+                }
 
             }            
 
@@ -157,7 +223,7 @@ namespace Pixi
             #region events
 
             private static void Image_MouseMove(object sender, MouseEventArgs e)
-            {           
+            {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     pickedColor = ColorsManager.SetColor(true,pickedColor);
@@ -168,10 +234,17 @@ namespace Pixi
                     pickedColor = ColorsManager.SetColor(false, pickedColor);
                     CheckTool(true);
                 }
+                Point point = Mouse.GetPosition(DrawArea.image);
+                xCoords = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
+                yCoords = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
             }
 
             private static void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
             {
+                Point point = Mouse.GetPosition(DrawArea.image);
+                clickedX = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
+                clickedY = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
+
                 pickedColor = ColorsManager.SetColor(true, pickedColor);
                 CheckTool(false, onlyClicked: true);
             }
@@ -179,15 +252,44 @@ namespace Pixi
 
             private static void Image_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
             {
+                Point point = Mouse.GetPosition(DrawArea.image);
+                clickedX = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
+                clickedY = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
+
                 pickedColor = ColorsManager.SetColor(false, pickedColor);
                 CheckTool(true, onlyClicked: true);
             }
 
             private static void Image_MouseUp(object sender, MouseButtonEventArgs e)
             {
+                wb = null;
                 Actions.Action action = new Actions.Action(DrawArea.activeLayer);               
             }
 
+            private static void Image_MouseLeave(object sender, MouseEventArgs e)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
+                {
+                    Actions.Action action = new Actions.Action(DrawArea.activeLayer);
+                    mouseLeftClicked = true;
+                }
+            }
+
+            private static void Image_MouseEnter(object sender, MouseEventArgs e)
+            {
+                if(e.LeftButton != MouseButtonState.Pressed && e.RightButton != MouseButtonState.Pressed)
+                {
+                    wb = null;
+                }
+                if(e.LeftButton== MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)
+                {
+                    if (mouseLeftClicked == true)
+                    {
+                        Actions.Action.prevousBitmapsList.RemoveAt(Actions.Action.prevousBitmapsList.Count - 1);
+                        mouseLeftClicked = false;
+                    }
+                }
+            }
             #endregion
         }
     }

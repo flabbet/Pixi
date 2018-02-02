@@ -15,6 +15,9 @@
         <RoutedUICommand x:Key="EarseTool" Text="Setting earse tool" />
         <RoutedUICommand x:Key="ColorPickerTool" Text="Setting ColorPicker tool" />
         <RoutedUICommand x:Key="Undo" Text="Undo last action" />
+        <RoutedUICommand x:Key="LineTool" Text="Create line" />
+        <RoutedUICommand x:Key="NewFile" Text="Create File" />
+        <RoutedUICommand x:Key="SaveFile" Text="Save File" />
     </Window.Resources>
 
     <Window.CommandBindings>
@@ -28,6 +31,12 @@
                     Executed="ColorPicker_Shortcut" />
         <CommandBinding Command="{StaticResource Undo}" 
                     Executed="Undo_Shortcut" />
+        <CommandBinding Command="{StaticResource LineTool}" 
+                    Executed="LineTool_Shortcut" />
+        <CommandBinding Command="{StaticResource NewFile}" 
+                    Executed="NewFile_Shortcut" />
+        <CommandBinding Command="{StaticResource SaveFile}" 
+                    Executed="SaveFile_Shortcut" />
     </Window.CommandBindings>
 
     <Window.InputBindings>
@@ -36,6 +45,9 @@
         <KeyBinding Key="E" Command="{StaticResource EarseTool}" />
         <KeyBinding Key="R" Command="{StaticResource ColorPickerTool}" />
         <KeyBinding Modifiers="Ctrl" Key="Z" Command="{StaticResource Undo}" />
+        <KeyBinding Key="L" Command="{StaticResource LineTool}" />
+        <KeyBinding Modifiers="Ctrl" Key="N" Command="{StaticResource NewFile}" />
+        <KeyBinding Modifiers="Ctrl" Key="S" Command="{StaticResource SaveFile}" />
     </Window.InputBindings>
 
     <Grid Name="MainGrid">
@@ -79,7 +91,19 @@
 
             <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,124,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="LineToolButton" Click="LineTool_Click" ToolTip="Line tool, used to create lines (L)">
                 <input:Button.Background>
-                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/Earser image.png"/>
+                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/Line Image.png"/>
+                </input:Button.Background>
+            </Button>
+            
+            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="67,124,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="RectangleToolButton" Click="RectangleToolButton_Click" ToolTip="Rectangle creator tool (R)">
+                <input:Button.Background>
+                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/Rectangle Image.png"/>
+                </input:Button.Background>
+            </Button>
+            
+            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,181,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="CircleToolButton" Click="CircleToolButton_Click" ToolTip="Circle tool (C)">
+                <input:Button.Background>
+                    <input:ImageBrush Stretch="Uniform" ImageSource="Images/elipsa.png"/>
                 </input:Button.Background>
             </Button>
             <!--Color choosing-->

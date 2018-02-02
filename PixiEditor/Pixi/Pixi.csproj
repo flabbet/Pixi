@@ -189,5 +189,14 @@
   <ItemGroup>
     <Resource Include="Images\Pipette image.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Line Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Rectangle Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\elipsa.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -14,6 +14,7 @@ namespace Pixi
         class Action
         {
             public static List<WriteableBitmap> prevousBitmapsList = new List<WriteableBitmap>();
+            public static int UndoAmount { get; } = 25;
             public Action(Layer drawAreaBitmap)
             {
                 WriteableBitmap wb = drawAreaBitmap.LayerBitmap.Clone();
@@ -22,6 +23,10 @@ namespace Pixi
 
             public static void Undo()
             {
+                if(prevousBitmapsList.Count > UndoAmount)
+                {
+                    prevousBitmapsList.RemoveAt(0);
+                }
                 DrawArea.activeLayer.LayerBitmap.Clear();
                 DrawArea.activeLayer.LayerBitmap.Blit(new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), prevousBitmapsList[prevousBitmapsList.Count-2], new Rect(0, 0, DrawArea.areaSize, DrawArea.areaSize), WriteableBitmapExtensions.BlendMode.Additive);
                 prevousBitmapsList.RemoveAt(prevousBitmapsList.Count - 1);
