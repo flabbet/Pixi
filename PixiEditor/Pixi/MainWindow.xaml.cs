@@ -41,6 +41,7 @@ namespace Pixi
         public static ColorPicker firstColorPicker, secondColorPicker;
         public static ListView lastListViewOpened;
         private static Button lastSelectedToolButton;
+        public static Window pixiWindow;
         public MainWindow()
         {
             InitializeComponent();
@@ -55,6 +56,7 @@ namespace Pixi
             saveAsButton = SaveAsButton;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
+            pixiWindow = Pixi;
             ColorsManager.firstColorRectangle = FirstColorRectangle;
             ColorsManager.secondColorRectangle = SecondColorRectangle;
             ColorsManager.firstColorRectangle.Fill = new SolidColorBrush(Tools.firstColor);

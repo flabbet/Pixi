@@ -52,7 +52,7 @@
 
     <Grid Name="MainGrid">
         <Border HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
-            <Border Margin="123,9,140,9" Background="DimGray">
+            <Border Margin="65,4,140,9" Background="DimGray">
                 <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="816" Height="816" Margin="10,29,10,10" Visibility="Hidden" Name="CanvasBackground">
                     <Border.Background>
                         <ImageBrush ImageSource="Images/transparent bg.png" Stretch="UniformToFill" Opacity="0.2"/>
@@ -66,7 +66,7 @@
         </Border>
         <Canvas Name="PopUpsArea" HorizontalAlignment="Center" VerticalAlignment="Center" Height="150" Width="400" Margin="447,362,445,457"/>
 
-        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="128" Margin="0,38,0,0" Background="#FF363434" Name="ToolBar">
+        <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="70" Margin="0,33,0,0" Background="#FF363434" Name="ToolBar">
             <Border BorderThickness="0" BorderBrush="Gray" Margin="0,-3,0,0"></Border>
             <Button  HorizontalAlignment="Left" Margin="10,10,0,0" BorderBrush="White" BorderThickness="0" VerticalAlignment="Top" Width="52" Height="52" Name="PenToolButton" Click="DrawButton_Click" ToolTip="Pen tool, used to paint (P)" Cursor="Arrow" >
                 <input:Button.Background>
@@ -78,12 +78,12 @@
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/Bucket image.png"/>
                 </input:Button.Background>
             </Button>
-            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="67,67,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="ColorPickerToolButton" Click="ColorPickerButton_Click" ToolTip="Color picker, used to pick color from field (R)">
+            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,295,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="ColorPickerToolButton" Click="ColorPickerButton_Click" ToolTip="Color picker, used to pick color from field (R)">
                 <input:Button.Background>
                     <input:ImageBrush ImageSource="Images/Pipette image.png" Stretch="Uniform"/>
                 </input:Button.Background>
             </Button>
-            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="67,10,0,0" VerticalAlignment="Top" Name="EarseToolButton" Width="52" Height="52" Click="EarseButton_Click" ToolTip="Earse tool, used to earse colors from fields (E)">
+            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,352,0,0" VerticalAlignment="Top" Name="EarseToolButton" Width="52" Height="52" Click="EarseButton_Click" ToolTip="Earse tool, used to earse colors from fields (E)">
                 <input:Button.Background>
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/Earser image.png"/>
                 </input:Button.Background>
@@ -94,23 +94,23 @@
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/Line Image.png"/>
                 </input:Button.Background>
             </Button>
-            
-            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="67,124,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="RectangleToolButton" Click="RectangleToolButton_Click" ToolTip="Rectangle creator tool (R)">
+
+            <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,238,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="RectangleToolButton" Click="RectangleToolButton_Click" ToolTip="Rectangle creator tool (R)">
                 <input:Button.Background>
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/Rectangle Image.png"/>
                 </input:Button.Background>
             </Button>
-            
+
             <Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,181,0,0" VerticalAlignment="Top" Width="52" Height="52" Name="CircleToolButton" Click="CircleToolButton_Click" ToolTip="Circle tool (C)">
                 <input:Button.Background>
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/elipsa.png"/>
                 </input:Button.Background>
             </Button>
             <!--Color choosing-->
-            <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="19,0,0,51" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
-            <xctk:ColorPicker Width="50" Height="50" Margin="19,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
-            <Rectangle Height="50" Width="50" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="49,0,0,22" Name="SecondColorRectangle"></Rectangle>
-            <xctk:ColorPicker Width="50" Height="50" Margin="49,0,0,22" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="SecondColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="2.5,0,0,51" Name="FirstColorRectangle" Fill="GhostWhite"></Rectangle>
+            <xctk:ColorPicker Width="40" Height="40" Margin="2,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="26.5,0,0,29" Name="SecondColorRectangle"></Rectangle>
+            <xctk:ColorPicker Width="40" Height="40" Margin="26,0,0,29" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="SecondColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
         </Grid>
 
         <!--Menus-->

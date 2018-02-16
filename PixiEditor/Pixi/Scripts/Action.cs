@@ -14,7 +14,7 @@ namespace Pixi
         class Action
         {
             public static List<WriteableBitmap> prevousBitmapsList = new List<WriteableBitmap>();
-            public static int UndoAmount { get; } = 25;
+            public static int UndoAmount { get; } = 50;
             public Action(Layer drawAreaBitmap)
             {
                 WriteableBitmap wb = drawAreaBitmap.LayerBitmap.Clone();
