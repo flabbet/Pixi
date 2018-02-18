@@ -1,4 +1,6 @@
 ﻿using Microsoft.Win32;
+using Pixi.FieldTools;
+using Pixi.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -141,6 +143,8 @@ namespace Pixi
 
             private void SaveCanvasAsPng()
             {
+                DrawArea.activeLayer.LayerBitmap.SetPixel(Tools.lastX, Tools.lastY, Tools.lastColor);
+                //DrawArea.canvasGridLines.GridLinesDrawingVisual.Opacity = 0;
                 Rect bounds = VisualTreeHelper.GetDescendantBounds(DrawArea.mainPanel);
                 double dpi = 96d;
 
@@ -172,6 +176,7 @@ namespace Pixi
                 {
                     System.Windows.MessageBox.Show(err.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+                //DrawArea.canvasGridLines.GridLinesDrawingVisual.Opacity = 1;
             }
         }
     }

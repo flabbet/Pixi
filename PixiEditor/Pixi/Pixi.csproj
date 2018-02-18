@@ -113,11 +113,13 @@
     </ApplicationDefinition>
     <Compile Include="Scripts\Action.cs" />
     <Compile Include="Scripts\ColorsManager.cs" />
+    <Compile Include="Scripts\GridLines.cs" />
     <Compile Include="Scripts\Layer.cs" />
     <Compile Include="Scripts\NewFile.cs" />
     <Compile Include="Scripts\OpenFile.cs" />
     <Compile Include="Scripts\SaveFile.cs" />
     <Compile Include="Scripts\Tools.cs" />
+    <Compile Include="Scripts\VisualHost.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

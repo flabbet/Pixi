@@ -25,6 +25,9 @@ namespace Pixi
             private static Color pickedColor;                                                    //newColor that will be applied
             public static int xCoords;
             public static int yCoords;
+            public static bool mouseReleasedWhileAgo = false;
+            public static int lastX = 0, lastY = 0;
+            public static Color lastColor;
             private static bool mouseLeftClicked;
             private static WriteableBitmap wb = null;
             private static int clickedX, clickedY;
@@ -57,6 +60,9 @@ namespace Pixi
                 image.MouseUp += Image_MouseUp;
                 image.MouseLeave += Image_MouseLeave;
                 image.MouseEnter += Image_MouseEnter;
+                MainWindow.penButton.BorderThickness = new Thickness(2);             
+                selectedTool = AvailableTools.Pen;
+                mouseReleasedWhileAgo = true;
             }
 
 
@@ -189,6 +195,10 @@ namespace Pixi
                 }
                 else if (selectedTool == AvailableTools.FillBucket && onlyClicked == true)
                 {
+                    if (lastX != -1 && lastY != -1)
+                    {
+                        DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
+                    }
                     Color colorToReplace = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
                     if (DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords) == pickedColor) return;
                     FloodFIll(xCoords, yCoords, pickedColor, colorToReplace);
@@ -199,6 +209,10 @@ namespace Pixi
                 }
                 else if (selectedTool == AvailableTools.ColorPicker)
                 {
+                    if (lastX != -1 && lastY != -1)
+                    {
+                        DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
+                    }
                     ColorPickerTool(senderIsRightMouseButton);
                 }
                 else if (selectedTool == AvailableTools.Line)
@@ -218,25 +232,61 @@ namespace Pixi
 
             private static void HighlightField()
             {
+                if (lastX != xCoords || lastY != yCoords)
+                {
+                    if (mouseReleasedWhileAgo == false)
+                    {
+                        DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);                      
+                    }
+                    else
+                    {
+                        mouseReleasedWhileAgo = false;
+                    }
+                        lastColor = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
+                       Color color = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
+                    if (color == Colors.Transparent || color == (Color)ColorConverter.ConvertFromString("#00000000"))
+                    {
+                        color = (Color)ColorConverter.ConvertFromString("#33FFFFFF");
+                    }
+                    else
+                    {
+                        color = ColorsManager.ChangeColorBrightness(color, 0.2f);
+                    }
+                       DrawArea.activeLayer.LayerBitmap.SetPixel(xCoords, yCoords, color);                   
+                }
+                lastX = xCoords;
+                lastY = yCoords;
             }
 
             #region events
 
             private static void Image_MouseMove(object sender, MouseEventArgs e)
             {
+                Point point = Mouse.GetPosition(DrawArea.image);
+                xCoords = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
+                yCoords = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
+                if (e.LeftButton != MouseButtonState.Pressed && e.RightButton != MouseButtonState.Pressed)
+                {
+                    HighlightField();
+                }
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     pickedColor = ColorsManager.SetColor(true, pickedColor);
-                    CheckTool(false);
+                    CheckTool(false);    
+                    mouseReleasedWhileAgo = true;
+                    lastX = -1;
+                    lastY = -1;
+
                 }
                 else if (e.RightButton == MouseButtonState.Pressed)
                 {
                     pickedColor = ColorsManager.SetColor(false, pickedColor);
                     CheckTool(true);
-                }
-                Point point = Mouse.GetPosition(DrawArea.image);
-                xCoords = (int)(point.X / (DrawArea.image.Height / DrawArea.areaSize));
-                yCoords = (int)(point.Y / (DrawArea.image.Height / DrawArea.areaSize));
+                    mouseReleasedWhileAgo = true;
+                    lastX = -1;
+                    lastY = -1;
+                }              
+
             }
 
             private static void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -247,6 +297,9 @@ namespace Pixi
 
                 pickedColor = ColorsManager.SetColor(true, pickedColor);
                 CheckTool(false, onlyClicked: true);
+                mouseReleasedWhileAgo = true;
+                lastX = -1;
+                lastY = -1;
             }
 
 
@@ -258,6 +311,9 @@ namespace Pixi
 
                 pickedColor = ColorsManager.SetColor(false, pickedColor);
                 CheckTool(true, onlyClicked: true);
+                mouseReleasedWhileAgo = true;
+                lastX = -1;
+                lastY = -1;
             }
 
             private static void Image_MouseUp(object sender, MouseButtonEventArgs e)
@@ -272,6 +328,10 @@ namespace Pixi
                 {
                     Actions.Action action = new Actions.Action(DrawArea.activeLayer);
                     mouseLeftClicked = true;
+                }
+                else
+                {
+                    DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
                 }
             }
 

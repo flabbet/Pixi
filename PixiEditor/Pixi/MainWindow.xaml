@@ -51,7 +51,7 @@
     </Window.InputBindings>
 
     <Grid Name="MainGrid">
-        <Border HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+        <Grid HorizontalAlignment="Stretch" Margin="10,29,10,10" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
             <Border Margin="65,4,140,9" Background="DimGray">
                 <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="816" Height="816" Margin="10,29,10,10" Visibility="Hidden" Name="CanvasBackground">
                     <Border.Background>
@@ -59,11 +59,13 @@
                     </Border.Background>
                     <xctk:Zoombox MinScale="1" MaxScale="10" IsAnimated="False" KeepContentInBounds="True" CurrentViewChanged="Zoombox_CurrentViewChanged">
                         <Canvas
-				Width="816" Height="816" Name="MainPanel"/>
+				Width="816" Height="816" Name="MainPanel">
+                        </Canvas>
                     </xctk:Zoombox>
                 </Border>
             </Border>
-        </Border>
+            <Canvas Height="816" Width="816" Name="HelperCanvas"></Canvas>
+        </Grid>
         <Canvas Name="PopUpsArea" HorizontalAlignment="Center" VerticalAlignment="Center" Height="150" Width="400" Margin="447,362,445,457"/>
 
         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Width="70" Margin="0,33,0,0" Background="#FF363434" Name="ToolBar">

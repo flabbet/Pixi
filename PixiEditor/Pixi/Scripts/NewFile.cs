@@ -112,7 +112,7 @@ namespace Pixi
                 {
                     DrawArea.Delete(DrawArea.image);
                 }
-                DrawArea layer = new DrawArea(size);
+                DrawArea layer = new DrawArea(size, DrawArea.mainPanel);
             }
         }
     }

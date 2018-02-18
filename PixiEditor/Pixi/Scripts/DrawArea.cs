@@ -16,6 +16,7 @@ using Pixi.Actions;
 using Pixi.Core;
 using Pixi.FieldTools;
 using Pixi.IO;
+using Pixi.Settings;
 
 namespace Pixi
 {
@@ -27,7 +28,7 @@ namespace Pixi
         public static List<Layer> layers = new List<Layer>();
         public static Layer activeLayer;
 
-        public DrawArea(int size)
+        public DrawArea(int size, Canvas parent)
         {
             WriteableBitmap drawAreaWBitmap = BitmapFactory.New(size, size);
             image = new Image();
@@ -37,7 +38,7 @@ namespace Pixi
             image.Width = 816;
             image.Height = 816;
             image.Source = drawAreaWBitmap;
-            mainPanel.Children.Add(image);
+            parent.Children.Add(image);
             drawAreaWBitmap.Clear(Colors.Transparent);
             areaSize = size;
             MainWindow.saveAsButton.IsEnabled = true;
@@ -46,12 +47,14 @@ namespace Pixi
             activeLayer = layer;
             layers.Add(layer);
             Actions.Action action = new Actions.Action(layer);
+            //GridLines gridLines = new GridLines();
+            //canvasGridLines = gridLines;
         }
 
         public static void Delete(Image drawArea)
         {
             layers.Clear();
-            mainPanel.Children.Clear();
+            mainPanel.Children.Remove(drawArea);
         }
     }
 }

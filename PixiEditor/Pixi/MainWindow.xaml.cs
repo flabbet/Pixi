@@ -38,9 +38,11 @@ namespace Pixi
         public static Canvas popUpsArea;
         public static Button saveAsButton;
         public static Button newButton;
+        public static Canvas helperCanvas;
         public static ColorPicker firstColorPicker, secondColorPicker;
         public static ListView lastListViewOpened;
-        private static Button lastSelectedToolButton;
+        public static Button penButton;
+        public static Button lastSelectedToolButton;
         public static Window pixiWindow;
         public MainWindow()
         {
@@ -52,7 +54,9 @@ namespace Pixi
             transparentBackground = CanvasBackground;
             popUpsArea = PopUpsArea;
             newButton = NewFileButton;
+            helperCanvas = HelperCanvas;
             saveButton = SaveButton;
+            penButton = PenToolButton;
             saveAsButton = SaveAsButton;
             firstColorPicker = FirstColorPicker;
             secondColorPicker = SecondColorPicker;
