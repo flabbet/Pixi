@@ -14,6 +14,7 @@ using Xceed.Wpf.DataGrid;
 using System.Windows.Resources;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using Pixi.IO;
 
 namespace Pixi
 {
@@ -43,6 +44,7 @@ namespace Pixi
                 Rectangle = 6,
                 Triangle = 7,
                 Circle = 8,
+                DarkenLighten = 9,
             }
 
             //On application start
@@ -60,7 +62,8 @@ namespace Pixi
                 image.MouseUp += Image_MouseUp;
                 image.MouseLeave += Image_MouseLeave;
                 image.MouseEnter += Image_MouseEnter;
-                MainWindow.penButton.BorderThickness = new Thickness(2);             
+                MainWindow.penButton.BorderThickness = new Thickness(2);
+                MainWindow.lastSelectedToolButton = MainWindow.penButton;
                 selectedTool = AvailableTools.Pen;
                 mouseReleasedWhileAgo = true;
             }
@@ -186,19 +189,31 @@ namespace Pixi
                 }
             }
 
+            public static void DarkenLighten(bool darken = false)
+            {
+                Color color;
+                if (darken == false)
+                {
+                    color = ColorsManager.ChangeColorBrightness(DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords), 0.06f);
+                    DrawArea.activeLayer.LayerBitmap.SetPixel(xCoords, yCoords, color);
+                }
+                else
+                {
+                    color = ColorsManager.ChangeColorBrightness(DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords), -0.06f);
+                    DrawArea.activeLayer.LayerBitmap.SetPixel(xCoords, yCoords, color);
+                }           
+            }
+
             //Check what tool is selected
             private static void CheckTool(bool senderIsRightMouseButton, bool onlyClicked = false)
             {
+                DeleteRemainingPixel();
                 if (selectedTool == AvailableTools.Pen)
                 {
                     Draw(DrawArea.activeLayer.LayerBitmap, pickedColor);
                 }
                 else if (selectedTool == AvailableTools.FillBucket && onlyClicked == true)
                 {
-                    if (lastX != -1 && lastY != -1)
-                    {
-                        DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
-                    }
                     Color colorToReplace = DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords);
                     if (DrawArea.activeLayer.LayerBitmap.GetPixel(xCoords, yCoords) == pickedColor) return;
                     FloodFIll(xCoords, yCoords, pickedColor, colorToReplace);
@@ -209,10 +224,6 @@ namespace Pixi
                 }
                 else if (selectedTool == AvailableTools.ColorPicker)
                 {
-                    if (lastX != -1 && lastY != -1)
-                    {
-                        DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
-                    }
                     ColorPickerTool(senderIsRightMouseButton);
                 }
                 else if (selectedTool == AvailableTools.Line)
@@ -226,6 +237,21 @@ namespace Pixi
                 else if (selectedTool == AvailableTools.Circle)
                 {
                     CircleTool();
+                }
+                else if(selectedTool == AvailableTools.Zoom)
+                {
+                    DeleteRemainingPixel();
+                }
+                else if(selectedTool == AvailableTools.DarkenLighten && onlyClicked == true)
+                {
+                    if(senderIsRightMouseButton == true)
+                    {                       
+                        DarkenLighten(true);
+                    }
+                    else
+                    {
+                        DarkenLighten();
+                    }
                 }
 
             }
@@ -256,6 +282,14 @@ namespace Pixi
                 }
                 lastX = xCoords;
                 lastY = yCoords;
+            }
+
+            public static void DeleteRemainingPixel()
+            {
+                if (lastX != -1 && lastY != -1)
+                {
+                    DrawArea.activeLayer.LayerBitmap.SetPixel(lastX, lastY, lastColor);
+                }
             }
 
             #region events
@@ -318,7 +352,7 @@ namespace Pixi
 
             private static void Image_MouseUp(object sender, MouseButtonEventArgs e)
             {
-                wb = null;
+                wb = null;                
                 Actions.Action action = new Actions.Action(DrawArea.activeLayer);
             }
 

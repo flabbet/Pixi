@@ -116,7 +116,7 @@ namespace Pixi
         }
 
         private void Zoombox_CurrentViewChanged(object sender, Xceed.Wpf.Toolkit.Zoombox.ZoomboxViewChangedEventArgs e)
-        {
+        {          
             if (lastSelectedToolButton != null)
             {
                 lastSelectedToolButton.BorderThickness = new Thickness(0);
@@ -155,6 +155,17 @@ namespace Pixi
                 lastSelectedToolButton.BorderThickness = new Thickness(0);
             }
             Tools.selectedTool = Tools.AvailableTools.Circle;
+            lastSelectedToolButton = sender as Button;
+            lastSelectedToolButton.BorderThickness = new Thickness(2);
+        }
+
+        private void BrightnessButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (lastSelectedToolButton != null)
+            {
+                lastSelectedToolButton.BorderThickness = new Thickness(0);
+            }
+            Tools.selectedTool = Tools.AvailableTools.DarkenLighten;
             lastSelectedToolButton = sender as Button;
             lastSelectedToolButton.BorderThickness = new Thickness(2);
         }
@@ -224,8 +235,9 @@ namespace Pixi
         private void Undo_Click(object sender, RoutedEventArgs e)
         {
             if (Actions.Action.prevousBitmapsList.Count < 2) return;
-
-                Actions.Action.Undo();
+            Actions.Action.Undo();
+            Tools.lastColor = DrawArea.activeLayer.LayerBitmap.GetPixel(Tools.xCoords, Tools.yCoords);
+            Tools.DeleteRemainingPixel();
         }
         #region Shortcuts
         private void PenTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
@@ -275,8 +287,10 @@ namespace Pixi
         private void Undo_Shortcut(object sender, ExecutedRoutedEventArgs e)
         {
             if (Actions.Action.prevousBitmapsList.Count < 2) return;
+            Tools.lastColor = Colors.Transparent;
+            Actions.Action.Undo();
+            Tools.DeleteRemainingPixel();
 
-                Actions.Action.Undo();            
         }
 
         private void LineTool_Shortcut(object sender, ExecutedRoutedEventArgs e)
