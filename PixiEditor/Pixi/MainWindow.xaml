@@ -115,7 +115,7 @@
             <xctk:ColorPicker Width="40" Height="40" Margin="2,0,0,51" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="FirstColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
             <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="26.5,0,0,29" Name="SecondColorRectangle"></Rectangle>
             <xctk:ColorPicker Width="40" Height="40" Margin="26,0,0,29" HorizontalAlignment="Left" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Name="SecondColorPicker" SelectedColorChanged="ColorPicker_SelectedColorChanged"></xctk:ColorPicker>
-            <input:Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="10,409,0,0" VerticalAlignment="Top" x:Name="BrightnessButton" Width="52" Height="52" Click="BrightnessButton_Click" ToolTip="Adjust pixel brightness (D)">
+            <input:Button HorizontalAlignment="Left" BorderBrush="White" BorderThickness="0" Margin="8,409,0,0" VerticalAlignment="Top" x:Name="BrightnessButton" Width="52" Height="52" Click="BrightnessButton_Click" ToolTip="Adjust pixel brightness (D)">
                 <input:Button.Background>
                     <input:ImageBrush Stretch="Uniform" ImageSource="Images/Earser image.png"/>
                 </input:Button.Background>
