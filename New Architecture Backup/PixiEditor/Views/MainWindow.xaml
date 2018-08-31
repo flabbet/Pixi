@@ -1,0 +1,116 @@
+﻿<Window x:Class="PixiEditor.MainWindow" MinHeight="1000" MinWidth="1100"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PixiEditor"
+        xmlns:vm="clr-namespace:PixiEditor.ViewModels"
+        xmlns:vws="clr-namespace:PixiEditor.Views"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Pixi" Height="1000" Width="1600" Background="#FF252424" WindowStartupLocation="CenterScreen" WindowState="Maximized" DataContext="{DynamicResource ViewModelMain}">
+    <Window.Resources>
+        <vm:ViewModelMain x:Key="ViewModelMain"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70*"/>
+            <ColumnDefinition Width="1420*"/>
+            <ColumnDefinition Width="110*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="908*"/>
+            <RowDefinition Height="30*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.ColumnSpan="3" Background="#FF363434" Grid.Row="0" Height="30"/>
+        <WrapPanel Grid.ColumnSpan="2" Grid.RowSpan="2" Panel.ZIndex="100">
+            <vws:MenuButton Text="File" Margin="0,0,-140,0">
+                <vws:MenuButton.Item>
+                    <StackPanel>
+                        <Button Style="{StaticResource MenuInsideButtonStyle}" Content="New" Command="{Binding GenerateDrawAreaCommand}"/>
+                    </StackPanel>
+                </vws:MenuButton.Item>
+            </vws:MenuButton>
+            <vws:MenuButton Text="Edit" Margin="0,0,-140,0">
+                <vws:MenuButton.Item>
+                    <StackPanel>
+                        <Button Style="{StaticResource MenuInsideButtonStyle}" Content="Undo"/>
+                    </StackPanel>
+                </vws:MenuButton.Item>
+            </vws:MenuButton>
+
+            <vws:MenuButton Text="View" >
+                <vws:MenuButton.Item>
+                    <StackPanel>
+                        <Button Style="{StaticResource MenuInsideButtonStyle}" Content="Recentre" Command="{Binding RecentreZoomboxCommand}" CommandParameter="{Binding ElementName=Zoombox}"/>
+                    </StackPanel>
+                </vws:MenuButton.Item>
+            </vws:MenuButton>
+        </WrapPanel>
+        <Grid Grid.Column="1" Grid.Row="1" Background="DimGray" Margin="0,5,0,0">
+            <Grid>
+                <vws:MainDrawingPanel CenterOnStart="True">
+                    <vws:MainDrawingPanel.Item>
+                        <Canvas Width="{Binding ActiveLayer.Width}" Height="{Binding ActiveLayer.Height}" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Image Source="{Binding ActiveLayer.LayerBitmap}"/>
+                    </Canvas>
+                    </vws:MainDrawingPanel.Item>
+                </vws:MainDrawingPanel>
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,5,5,0" Background="#363434" Grid.RowSpan="2">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" >
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Pen Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Bucket Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Line Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Circle Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Rectangle Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Pipette Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Earser Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Images/Earser Image.png" Stretch="Uniform"/>
+                </Button.Background>
+            </Button>
+        </StackPanel>
+
+        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="60" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0" Height="65">
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="Black" StrokeThickness="1" Fill="GhostWhite"/>
+            <xctk:ColorPicker Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" ></xctk:ColorPicker>
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="0,0,4,5"></Rectangle>
+            <xctk:ColorPicker Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Margin="0,0,4,5"/>
+        </Grid>
+
+    </Grid>
+</Window>
