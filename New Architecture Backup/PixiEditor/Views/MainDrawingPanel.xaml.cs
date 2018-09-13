@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PixiEditor.Models;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +27,39 @@ namespace PixiEditor.Views
         {
             InitializeComponent();
         }
+
+
+
+        public double MouseX
+        {
+            get { return (double)GetValue(MouseXProperty); }
+            set { SetValue(MouseXProperty, value);}
+        }
+
+        // Using a DependencyProperty as the backing store for MouseX.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MouseXProperty =
+            DependencyProperty.Register("MouseX", typeof(double), typeof(MainDrawingPanel), new PropertyMetadata(null));
+
+        public double MouseY
+        {
+            get { return (double)GetValue(MouseYProperty); }
+            set { SetValue(MouseYProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for MouseX.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MouseYProperty =
+            DependencyProperty.Register("MouseY", typeof(double), typeof(MainDrawingPanel), new PropertyMetadata(null));
+
+
+        public ICommand MouseMoveCommand
+        {
+            get { return (ICommand)GetValue(MouseMoveCommandProperty); }
+            set { SetValue(MouseMoveCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for MouseMoveCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MouseMoveCommandProperty =
+            DependencyProperty.Register("MouseMoveCommand", typeof(ICommand), typeof(MainDrawingPanel), new PropertyMetadata(null));
 
 
 

@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:PixiEditor"
         xmlns:vm="clr-namespace:PixiEditor.ViewModels"
         xmlns:vws="clr-namespace:PixiEditor.Views"
+        xmlns:helpers="clr-namespace:PixiEditor.Helpers"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Pixi" Height="1000" Width="1600" Background="#FF252424" WindowStartupLocation="CenterScreen" WindowState="Maximized" DataContext="{DynamicResource ViewModelMain}">
@@ -13,6 +15,12 @@
         <vm:ViewModelMain x:Key="ViewModelMain"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding 
+            Modifiers="Ctrl" 
+            Key="N"
+            Command="{Binding GenerateDrawAreaCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="70*"/>
@@ -54,51 +62,71 @@
             <Grid>
                 <vws:MainDrawingPanel CenterOnStart="True">
                     <vws:MainDrawingPanel.Item>
-                        <Canvas Width="{Binding ActiveLayer.Width}" Height="{Binding ActiveLayer.Height}" Background="Red" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Image Source="{Binding ActiveLayer.LayerBitmap}"/>
-                    </Canvas>
+                        <Canvas Width="{Binding ActiveLayer.Width}" Height="{Binding ActiveLayer.Height}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <i:InvokeCommandAction Command="{Binding MouseMoveOrClickCommand}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MouseMoveOrClickCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <i:Interaction.Behaviors>
+                                <helpers:MouseBehaviour MouseX="{Binding MouseXOnCanvas, Mode=OneWayToSource}" MouseY="{Binding MouseYOnCanvas, Mode=OneWayToSource}"/>
+                            </i:Interaction.Behaviors>
+                            <Image Source="/Images/transparent bg.png" Height="{Binding ActiveLayer.Height}" Width="{Binding ActiveLayer.Width}" Opacity="0.2"/>
+                            <ItemsControl ItemsSource="{Binding Layers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Content="{Binding LayerImage}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            
+                            
+                        </Canvas>
                     </vws:MainDrawingPanel.Item>
                 </vws:MainDrawingPanel>
             </Grid>
         </Grid>
 
         <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,5,5,0" Background="#363434" Grid.RowSpan="2">
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" >
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Pen">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Pen Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Bucket">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Bucket Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Line">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Line Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Circle">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Circle Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Rectangle">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Rectangle Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="ColorPicker">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Pipette Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Earser">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Earser Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
-            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0">
+            <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Lighten">
                 <Button.Background>
                     <ImageBrush ImageSource="/Images/Earser Image.png" Stretch="Uniform"/>
                 </Button.Background>
@@ -106,10 +134,18 @@
         </StackPanel>
 
         <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="60" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0" Height="65">
-            <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="Black" StrokeThickness="1" Fill="GhostWhite"/>
-            <xctk:ColorPicker Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" ></xctk:ColorPicker>
-            <Rectangle Height="40" Width="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="GhostWhite" Stroke="Black" StrokeThickness="1" Margin="0,0,4,5"></Rectangle>
-            <xctk:ColorPicker Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Margin="0,0,4,5"/>
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Left" VerticalAlignment="Top" Stroke="Black" StrokeThickness="1">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding PrimaryColor, Mode=OneWay}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <xctk:ColorPicker Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" SelectedColor="{Binding PrimaryColor, Mode=OneWayToSource}"></xctk:ColorPicker>
+            <Rectangle Height="40" Width="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="0,0,4,5">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding SecondaryColor, Mode=OneWay}"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <xctk:ColorPicker Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Margin="0,0,4,5" SelectedColor="{Binding SecondaryColor, Mode=OneWayToSource}"/>
         </Grid>
 
     </Grid>

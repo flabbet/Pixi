@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PixiEditor.Models.Tools
 {
-    enum ToolType
+    public enum ToolType
     {
         Pen = 0, Bucket, Line, Circle, Rectangle, ColorPicker, Earser, Lighten
     }

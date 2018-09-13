@@ -24,6 +24,11 @@ namespace PixiEditor.Models
             set { _Y = value; }
         }
 
+        public Coordinates()
+        {
+
+        }
+
         public Coordinates(int x, int y)
         {
             X = x;
