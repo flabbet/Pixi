@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PixiEditor.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PixiEditor.Models.Tools
 {
-    class ToolManager : INotifyPropertyChanged
+    class ToolManager : NotifyableObject
     {
 
         private ToolType _activeTool;
@@ -22,16 +23,6 @@ namespace PixiEditor.Models.Tools
                     _activeTool = value;
                     RaisePropertyChanged("ActiveTool");
                 }
-            }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        public void RaisePropertyChanged(string property)
-        {
-            if(property != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
     }

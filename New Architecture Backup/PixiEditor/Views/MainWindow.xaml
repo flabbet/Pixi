@@ -39,6 +39,7 @@
                 <vws:MenuButton.Item>
                     <StackPanel>
                         <Button Style="{StaticResource MenuInsideButtonStyle}" Content="New" Command="{Binding GenerateDrawAreaCommand}"/>
+                        <Button Style="{StaticResource MenuInsideButtonStyle}" Content="Save" Command="{Binding SaveFileCommand}"/>
                     </StackPanel>
                 </vws:MenuButton.Item>
             </vws:MenuButton>
@@ -74,7 +75,7 @@
                             <i:Interaction.Behaviors>
                                 <helpers:MouseBehaviour MouseX="{Binding MouseXOnCanvas, Mode=OneWayToSource}" MouseY="{Binding MouseYOnCanvas, Mode=OneWayToSource}"/>
                             </i:Interaction.Behaviors>
-                            <Image Source="/Images/transparent bg.png" Height="{Binding ActiveLayer.Height}" Width="{Binding ActiveLayer.Width}" Opacity="0.2"/>
+                            <Image Source="/Images/transparent bg.png" Height="{Binding ActiveLayer.Height}" Width="{Binding ActiveLayer.Width}" Opacity="0.2" Stretch="UniformToFill"/>
                             <ItemsControl ItemsSource="{Binding Layers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -128,7 +129,7 @@
             </Button>
             <Button HorizontalAlignment="Center" VerticalAlignment="Top" Height="52" Width="52" Margin="0,10,0,0" Command="{Binding SelectToolCommand, Mode=OneWay}" CommandParameter="Lighten">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Images/Earser Image.png" Stretch="Uniform"/>
+                    <ImageBrush ImageSource="/Images/Lighten Image.png" Stretch="Uniform"/>
                 </Button.Background>
             </Button>
         </StackPanel>
@@ -139,13 +140,13 @@
                     <SolidColorBrush Color="{Binding PrimaryColor, Mode=OneWay}"/>
                 </Rectangle.Fill>
             </Rectangle>
-            <xctk:ColorPicker Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" SelectedColor="{Binding PrimaryColor, Mode=OneWayToSource}"></xctk:ColorPicker>
+            <xctk:ColorPicker Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" SelectedColor="{Binding PrimaryColor, Mode=TwoWay}"></xctk:ColorPicker>
             <Rectangle Height="40" Width="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" Stroke="Black" StrokeThickness="1" Margin="0,0,4,5">
                 <Rectangle.Fill>
                     <SolidColorBrush Color="{Binding SecondaryColor, Mode=OneWay}"/>
                 </Rectangle.Fill>
             </Rectangle>
-            <xctk:ColorPicker Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Margin="0,0,4,5" SelectedColor="{Binding SecondaryColor, Mode=OneWayToSource}"/>
+            <xctk:ColorPicker Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" UsingAlphaChannel="True" AvailableColorsSortingMode="Alphabetical" ShowDropDownButton="False" Background="Transparent" BorderThickness="0" ShowRecentColors="True" Margin="0,0,4,5" SelectedColor="{Binding SecondaryColor, Mode=TwoWay}"/>
         </Grid>
 
     </Grid>

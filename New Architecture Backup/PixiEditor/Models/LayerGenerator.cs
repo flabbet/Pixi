@@ -14,7 +14,12 @@ namespace PixiEditor.Models
 {
     public static class LayerGenerator 
     {
-
+        /// <summary>
+        /// Generating useable layer with image and bitmap
+        /// </summary>
+        /// <param name="imageWidth">Width of layer.</param>
+        /// <param name="imageHeight">Height of layer.</param>
+        /// <returns></returns>
         public static Layer GenerateLayer(int imageWidth, int imageHeight)
         {
             Image image = new Image();
@@ -28,6 +33,12 @@ namespace PixiEditor.Models
             return new Layer(bitmap, image);
         }
 
+        /// <summary>
+        /// Generates bitmap ready to work with
+        /// </summary>
+        /// <param name="bitmapWidth">Width of bitmap.</param>
+        /// <param name="imageHeight">Height of bitmap.</param>
+        /// <returns></returns>
         private static WriteableBitmap GenerateBitmap(int bitmapWidth, int imageHeight)
         {
             WriteableBitmap bitmap = BitmapFactory.New(bitmapWidth, imageHeight);

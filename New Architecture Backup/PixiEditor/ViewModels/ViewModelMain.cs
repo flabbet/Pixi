@@ -1,5 +1,7 @@
-﻿using PixiEditor.Helpers;
+﻿using Microsoft.Win32;
+using PixiEditor.Helpers;
 using PixiEditor.Models;
+using PixiEditor.Models.Enums;
 using PixiEditor.Models.Tools;
 using PixiEditor.Views;
 using System;
@@ -27,6 +29,7 @@ namespace PixiEditor.ViewModels
         public RelayCommand SelectToolCommand { get; set; } //Command that handles tool switching 
         public RelayCommand GenerateDrawAreaCommand { get; set; } //Command that generates draw area
         public RelayCommand MouseMoveOrClickCommand { get; set; } //Command that is used to draw
+        public RelayCommand SaveFileCommand { get; set; } //Command that is used to save file
 
         private Layer _activeLayer;
 
@@ -68,7 +71,6 @@ namespace PixiEditor.ViewModels
             get { return _secondaryColor; }
             set { if (_secondaryColor != value) { _secondaryColor = value; RaisePropertyChanged("SecondaryColor"); } }
         }
-
        
 
         private ToolType _selectedTool = ToolType.Pen;
@@ -87,6 +89,7 @@ namespace PixiEditor.ViewModels
             SelectToolCommand = new RelayCommand(RecognizeTool);
             GenerateDrawAreaCommand = new RelayCommand(GenerateDrawArea);
             MouseMoveOrClickCommand = new RelayCommand(MouseMoveOrClick);
+            SaveFileCommand = new RelayCommand(SaveFile, CanSave);
             primaryToolSet = new ToolSet();
         }
 
@@ -103,7 +106,8 @@ namespace PixiEditor.ViewModels
         private void MouseMoveOrClick(object parameter)
         {
             Color color;
-            if(Mouse.LeftButton == MouseButtonState.Pressed)
+            Coordinates cords = new Coordinates((int)MouseXOnCanvas, (int)MouseYOnCanvas);
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
             {
                 color = PrimaryColor;
             }
@@ -117,8 +121,22 @@ namespace PixiEditor.ViewModels
                 return;
             }
 
-            primaryToolSet.UpdateCoordinates(new Coordinates((int)MouseXOnCanvas, (int)MouseYOnCanvas));
-            primaryToolSet.ExecuteTool(ActiveLayer, new Coordinates((int)MouseXOnCanvas, (int)MouseYOnCanvas), color, SelectedTool);
+            if (SelectedTool != ToolType.ColorPicker)
+            {
+                primaryToolSet.UpdateCoordinates(cords);
+                primaryToolSet.ExecuteTool(ActiveLayer, cords, color, SelectedTool);
+            }
+            else
+            {
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    PrimaryColor = ToolSet.ColorPicker(ActiveLayer, cords);
+                }
+                else
+                {
+                    SecondaryColor = ToolSet.ColorPicker(ActiveLayer, cords);
+                }
+            }
         }
 
         /// <summary>
@@ -127,8 +145,33 @@ namespace PixiEditor.ViewModels
         /// <param name="parameter"></param>
         private void GenerateDrawArea(object parameter)
         {
-            Layers.Add(new Layer(16, 16));
-            ActiveLayer = Layers[0];
+            NewFileDialog newFile = new NewFileDialog();
+            if (newFile.ShowDialog() == true)
+            {
+                Layers.Clear();
+                Layers.Add(new Layer(newFile.Width, newFile.Height));
+                ActiveLayer = Layers[0];
+            }
+        }
+        /// <summary>
+        /// Generates export dialog or saves directly if save data is known.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void SaveFile(object parameter)
+        {
+            if (Exporter._savePath == null)
+            {
+                Exporter.Export(FileType.PNG, ActiveLayer.LayerImage);
+            }
+            else
+            {
+                Exporter.ExportWithoutDialog(FileType.PNG, ActiveLayer.LayerImage);
+            }
+        }
+
+        private bool CanSave(object property)
+        {
+            return ActiveLayer != null;
         }
     }
 }

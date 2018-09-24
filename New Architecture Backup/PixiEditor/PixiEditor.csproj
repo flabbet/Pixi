@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MonitoredUndo, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MUF.1.2.1\lib\net40\MonitoredUndo.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -78,16 +81,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helpers\MouseBehaviour.cs" />
+    <Compile Include="Helpers\Behaviours\AllowableCharactersTextBoxBehavior.cs" />
+    <Compile Include="Helpers\Behaviours\MouseBehaviour.cs" />
+    <Compile Include="Helpers\NotifyableObject.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Models\Coordinates.cs" />
+    <Compile Include="Models\CustomDialog.cs" />
+    <Compile Include="Models\Enums\FileType.cs" />
+    <Compile Include="Models\ExColor.cs" />
+    <Compile Include="Models\Exporter.cs" />
     <Compile Include="Models\LayerGenerator.cs" />
     <Compile Include="Models\Layer.cs" />
     <Compile Include="Models\MousePositionConverter.cs" />
+    <Compile Include="Models\NewFileDialog.cs" />
+    <Compile Include="Models\ExportFileDialog.cs" />
     <Compile Include="Models\Tools\ToolSet.cs" />
-    <Compile Include="Models\Tools\ToolManager.cs" />
+    <Compile Include="Models\ToolManager.cs" />
     <Compile Include="Models\Tools\ToolType.cs" />
     <Compile Include="ViewModels\MenuButtonViewModel.cs" />
+    <Compile Include="ViewModels\NewFileMenuViewModel.cs" />
+    <Compile Include="ViewModels\SaveFilePopupViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelMain.cs" />
     <Compile Include="Views\MainDrawingPanel.xaml.cs">
@@ -99,6 +112,13 @@
     <Compile Include="Views\NewFilePopup.xaml.cs">
       <DependentUpon>NewFilePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SaveFilePopup.xaml.cs">
+      <DependentUpon>SaveFilePopup.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Styles\ThemeStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainDrawingPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,6 +147,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SaveFilePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -146,6 +170,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Monitored Undo Documentation.docx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -155,7 +180,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Lighten image.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Bucket image.png" />
     <Resource Include="Images\Earser image.png" />
@@ -165,6 +192,9 @@
     <Resource Include="Images\Pipette image.png" />
     <Resource Include="Images\Rectangle Image.png" />
     <Resource Include="Images\transparent bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Cross.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

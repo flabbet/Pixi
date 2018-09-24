@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PixiEditor.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Windows.Media.Imaging;
 
 namespace PixiEditor.Models
 {
-    public class Layer : INotifyPropertyChanged
+    public class Layer : NotifyableObject
     {
         private WriteableBitmap _layerBitmap;
 
@@ -62,15 +63,5 @@ namespace PixiEditor.Models
             LayerBitmap = layerBitmap;
             LayerImage = layerImage;
         }
-        #region Interface
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        public void RaisePropertyChanged(string property)
-        {
-            if (property != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
-        #endregion
     }
 }
