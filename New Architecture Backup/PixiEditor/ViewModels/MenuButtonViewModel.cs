@@ -26,6 +26,7 @@ namespace PixiEditor.ViewModels
             OpenListViewCommand = new RelayCommand(OpenListView);
             CloseListViewCommand = new RelayCommand(CloseListView);
             ListViewVisibility = Visibility.Hidden;
+
         }
 
         private void OpenListView(object parameter)

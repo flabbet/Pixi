@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonitoredUndo, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\MUF.1.2.1\lib\net40\MonitoredUndo.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -85,6 +82,7 @@
     <Compile Include="Helpers\Behaviours\MouseBehaviour.cs" />
     <Compile Include="Helpers\NotifyableObject.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
+    <Compile Include="Models\Change.cs" />
     <Compile Include="Models\Coordinates.cs" />
     <Compile Include="Models\CustomDialog.cs" />
     <Compile Include="Models\Enums\FileType.cs" />
@@ -98,6 +96,7 @@
     <Compile Include="Models\Tools\ToolSet.cs" />
     <Compile Include="Models\ToolManager.cs" />
     <Compile Include="Models\Tools\ToolType.cs" />
+    <Compile Include="Models\UndoManager.cs" />
     <Compile Include="ViewModels\MenuButtonViewModel.cs" />
     <Compile Include="ViewModels\NewFileMenuViewModel.cs" />
     <Compile Include="ViewModels\SaveFilePopupViewModel.cs" />
@@ -170,7 +169,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Monitored Undo Documentation.docx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

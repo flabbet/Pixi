@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,52 +19,56 @@ namespace PixiEditor.Models.Tools
         private bool _toolIsExecuting = false;
         private int _asyncDelay = 15;
 
-        public WriteableBitmap ExecuteTool(Layer layer, Coordinates startingCoords, Color color, ToolType tool)
+        public Layer ExecuteTool(Layer layer, Coordinates startingCoords, Color color, ToolType tool)
         {
-            WriteableBitmap writeableBitmap = layer.LayerBitmap;
+            Layer cLayer = layer;
+            WriteableBitmap oldBitmap = layer.LayerBitmap.Clone();
+            Image oldImage = layer.LayerImage;
+            oldImage.Source = oldBitmap;
             switch (tool)
             {
                 case ToolType.Pen:
-                    DrawPixel(writeableBitmap, startingCoords, color);
+                    cLayer.LayerBitmap = DrawPixel(cLayer.LayerBitmap, startingCoords, color);
                     break;
                 case ToolType.Bucket:
-                    FloodFill(writeableBitmap, startingCoords, color);
+                    cLayer.LayerBitmap = FloodFill(cLayer.LayerBitmap, startingCoords, color);
                     break;
                 case ToolType.Line:
                     if (_toolIsExecuting == false)
                     {
-                        LineAsync(layer, startingCoords, color);
+                        LineAsync(cLayer, startingCoords, color);
                     }
                     break;
                 case ToolType.Circle:
                     if(_toolIsExecuting == false)
                     {
-                        CircleAsync(layer, startingCoords, color);
+                        CircleAsync(cLayer, startingCoords, color);
                     }
                     break;
                 case ToolType.Rectangle:
                     if(_toolIsExecuting == false)
                     {
-                        RectangleAsync(layer, startingCoords, color);
+                        RectangleAsync(cLayer, startingCoords, color);
                     }
                     break;              
                 case ToolType.Earser:
-                    Earse(layer, startingCoords);
+                    cLayer.LayerBitmap = Earse(cLayer, startingCoords);
                     break;
                 case ToolType.Lighten:
                     if(Mouse.LeftButton == MouseButtonState.Pressed)
                     {
-                        Lighten(layer.LayerBitmap, startingCoords);
+                        cLayer.LayerBitmap = Lighten(cLayer.LayerBitmap, startingCoords);
                     }
                     else if(Mouse.RightButton == MouseButtonState.Pressed)
                     {
-                        Darken(layer.LayerBitmap, startingCoords);
+                        cLayer.LayerBitmap = Darken(cLayer.LayerBitmap, startingCoords);
                     }
                     break;
                 default:
                     break;
             }
-            return writeableBitmap;
+            UndoManager.RecordChanges("ActiveLayer", new Layer(oldBitmap, oldImage), cLayer, string.Format("{0} Tool.", tool.ToString()));
+            return cLayer;
         }
 
         /// <summary>
@@ -81,9 +86,11 @@ namespace PixiEditor.Models.Tools
         /// <param name="canvas">Bitmap to operate on.</param>
         /// <param name="pixelPosition">Coordinates of pixel.</param>
         /// <param name="color">Color to be set.</param>
-        private void DrawPixel(WriteableBitmap canvas, Coordinates pixelPosition, Color color)
+        private WriteableBitmap DrawPixel(WriteableBitmap canvas, Coordinates pixelPosition, Color color)
         {
-            canvas.SetPixel(pixelPosition.X, pixelPosition.Y, color);
+            WriteableBitmap bm = canvas;
+            bm.SetPixel(pixelPosition.X, pixelPosition.Y, color);
+            return bm;
         }
 
         /// <summary>
@@ -92,28 +99,30 @@ namespace PixiEditor.Models.Tools
         /// <param name="canvas">Bitmap to operate on</param>
         /// <param name="pixelPosition">Position of starting pixel</param>
         /// <param name="color">Fills area with this color</param>
-        private void FloodFill(WriteableBitmap canvas, Coordinates pixelPosition, Color color)
+        private WriteableBitmap FloodFill(WriteableBitmap canvas, Coordinates pixelPosition, Color color)
         {
-            Color colorToReplace = canvas.GetPixel(pixelPosition.X, pixelPosition.Y);
+            WriteableBitmap bm = canvas;
+            Color colorToReplace = bm.GetPixel(pixelPosition.X, pixelPosition.Y);
             var stack = new Stack<Tuple<int, int>>();
             stack.Push(Tuple.Create(pixelPosition.X, pixelPosition.Y));
 
             while (stack.Count > 0)
             {
                 var point = stack.Pop();
-                if (point.Item1 < 0 || point.Item1 > canvas.Height - 1) continue;
-                if (point.Item2 < 0 || point.Item2 > canvas.Width - 1) continue;
-                if (canvas.GetPixel(point.Item1, point.Item2) == color) continue;
+                if (point.Item1 < 0 || point.Item1 > bm.Height - 1) continue;
+                if (point.Item2 < 0 || point.Item2 > bm.Width - 1) continue;
+                if (bm.GetPixel(point.Item1, point.Item2) == color) continue;
 
-                if (canvas.GetPixel(point.Item1, point.Item2) == colorToReplace)
+                if (bm.GetPixel(point.Item1, point.Item2) == colorToReplace)
                 {
-                    canvas.SetPixel(point.Item1, point.Item2, color);
+                    bm.SetPixel(point.Item1, point.Item2, color);
                     stack.Push(Tuple.Create(point.Item1, point.Item2 - 1));
                     stack.Push(Tuple.Create(point.Item1 + 1, point.Item2));
                     stack.Push(Tuple.Create(point.Item1, point.Item2 + 1));
                     stack.Push(Tuple.Create(point.Item1 - 1, point.Item2));
                 }
             }
+            return bm;
         }
 
         /// <summary>
@@ -124,15 +133,16 @@ namespace PixiEditor.Models.Tools
         /// <param name="color">Does it really need a description?</param> 
         private async void LineAsync(Layer layer, Coordinates coordinates, Color color)
         {
+            WriteableBitmap wb = layer.LayerBitmap;
             _toolIsExecuting = true;
             //clones bitmap before line
-            WriteableBitmap writeableBitmap = layer.LayerBitmap.Clone();
+            WriteableBitmap writeableBitmap = wb.Clone();
             //While Mouse buttons are pressed, clears current bitmap, pastes cloned bitmap and draws line, on each iteration
             while (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
             {
-                layer.LayerBitmap.Clear();
-                layer.LayerBitmap.Blit(new Rect(new Size(layer.Width, layer.Height)), writeableBitmap, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
-                layer.LayerBitmap.DrawLineBresenham(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
+                wb.Clear();
+                wb.Blit(new Rect(new Size(layer.Width, layer.Height)), writeableBitmap, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
+                wb.DrawLineBresenham(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
                 await Task.Delay(_asyncDelay);
             }           
             _toolIsExecuting = false;
@@ -146,28 +156,29 @@ namespace PixiEditor.Models.Tools
         /// <param name="color">Circle color.</param>
         private async void CircleAsync(Layer layer, Coordinates coordinates, Color color)
         {
+            WriteableBitmap wb = layer.LayerBitmap;
             //Basically does the same like rectangle method, but with different shape
             _toolIsExecuting = true;
-            WriteableBitmap bitmap = layer.LayerBitmap.Clone();
+            WriteableBitmap bitmap = wb.Clone();
             while (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
             {
-                layer.LayerBitmap.Clear();
-                layer.LayerBitmap.Blit(new Rect(new Size(layer.Width, layer.Height)), bitmap, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
+                wb.Clear();
+                wb.Blit(new Rect(new Size(layer.Width, layer.Height)), bitmap, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
                 if (coordinates.X > _activeCoordinates.X && coordinates.Y > _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawEllipse(_activeCoordinates.X, _activeCoordinates.Y, coordinates.X, coordinates.Y, color);
+                    wb.DrawEllipse(_activeCoordinates.X, _activeCoordinates.Y, coordinates.X, coordinates.Y, color);
                 }
                 else if (coordinates.X < _activeCoordinates.X && coordinates.Y < _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawEllipse(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
+                    wb.DrawEllipse(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
                 }
                 else if (coordinates.Y > _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawEllipse(coordinates.X, _activeCoordinates.Y, _activeCoordinates.X, coordinates.Y, color);
+                    wb.DrawEllipse(coordinates.X, _activeCoordinates.Y, _activeCoordinates.X, coordinates.Y, color);
                 }
                 else
                 {
-                    layer.LayerBitmap.DrawEllipse(_activeCoordinates.X, coordinates.Y, coordinates.X, _activeCoordinates.Y, color);
+                    wb.DrawEllipse(_activeCoordinates.X, coordinates.Y, coordinates.X, _activeCoordinates.Y, color);
                 }
                 await Task.Delay(_asyncDelay);
             }
@@ -182,35 +193,41 @@ namespace PixiEditor.Models.Tools
         /// <param name="color">Rectangle color</param>
         private async void RectangleAsync(Layer layer, Coordinates coordinates, Color color)
         {
+            WriteableBitmap wb = layer.LayerBitmap;
             _toolIsExecuting = true;
-            WriteableBitmap wb = layer.LayerBitmap.Clone();
+            WriteableBitmap writeableBitmap = wb.Clone();
             while (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
             {
                 //Two lines below are responsible for clearing last rectangle (on mouse move), to live show rectangle on bitmap
-                layer.LayerBitmap.Clear();
-                layer.LayerBitmap.Blit(new Rect(new Size(layer.Width, layer.Height)), wb, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
-                //Those if's are changing direction of rectangle, in other words: flips rectangle on X and Y axis when needed
+                wb.Clear();
+                wb.Blit(new Rect(new Size(layer.Width, layer.Height)), writeableBitmap, new Rect(new Size(layer.Width, layer.Height)), WriteableBitmapExtensions.BlendMode.Additive);
+                //Those ifs are changing direction of rectangle, in other words: flips rectangle on X and Y axis when needed
                 if (coordinates.X > _activeCoordinates.X && coordinates.Y > _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawRectangle(_activeCoordinates.X, _activeCoordinates.Y, coordinates.X, coordinates.Y, color);
+                    wb.DrawRectangle(_activeCoordinates.X, _activeCoordinates.Y, coordinates.X, coordinates.Y, color);
                 }
                 else if (coordinates.X < _activeCoordinates.X && coordinates.Y < _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawRectangle(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
+                    wb.DrawRectangle(coordinates.X, coordinates.Y, _activeCoordinates.X, _activeCoordinates.Y, color);
                 }
                 else if (coordinates.Y > _activeCoordinates.Y)
                 {
-                    layer.LayerBitmap.DrawRectangle(coordinates.X, _activeCoordinates.Y, _activeCoordinates.X, coordinates.Y, color);
+                    wb.DrawRectangle(coordinates.X, _activeCoordinates.Y, _activeCoordinates.X, coordinates.Y, color);
                 }
                 else
                 {
-                    layer.LayerBitmap.DrawRectangle(_activeCoordinates.X, coordinates.Y, coordinates.X, _activeCoordinates.Y, color);
+                    wb.DrawRectangle(_activeCoordinates.X, coordinates.Y, coordinates.X, _activeCoordinates.Y, color);
                 }
                 await Task.Delay(_asyncDelay);
             }            
             _toolIsExecuting = false;
         }
-
+        /// <summary>
+        /// Returns color of pixel.
+        /// </summary>
+        /// <param name="layer">Layer in which bitmap with pixels are stored.</param>
+        /// <param name="coordinates">Pixel coordinate.</param>
+        /// <returns></returns>
         public static Color ColorPicker(Layer layer, Coordinates coordinates)
         {
             return layer.LayerBitmap.GetPixel(coordinates.X, coordinates.Y);
@@ -221,21 +238,37 @@ namespace PixiEditor.Models.Tools
         /// </summary>
         /// <param name="layer">Layer to operate on</param>
         /// <param name="coordinates">Pixel coordinates</param>
-        private void Earse(Layer layer, Coordinates coordinates)
+        private WriteableBitmap Earse(Layer layer, Coordinates coordinates)
         {
-            layer.LayerBitmap.SetPixel(coordinates.X, coordinates.Y, Colors.Transparent);
+            WriteableBitmap wb = layer.LayerBitmap;
+            wb.SetPixel(coordinates.X, coordinates.Y, Colors.Transparent);
+            return wb;
         }
-
-        private void Lighten(WriteableBitmap bitmap, Coordinates coordinates)
+        /// <summary>
+        /// Ligtens pixel color.
+        /// </summary>
+        /// <param name="bitmap">Bitmap to work on.</param>
+        /// <param name="coordinates">Pixel coordinates.</param>
+        /// <returns></returns>
+        private WriteableBitmap Lighten(WriteableBitmap bitmap, Coordinates coordinates)
         {
-            Color newColor = ExColor.ChangeColorBrightness(bitmap.GetPixel(coordinates.X, coordinates.Y), 0.1f);
-            bitmap.SetPixel(coordinates.X, coordinates.Y, newColor);
+            WriteableBitmap wb = bitmap;
+            Color newColor = ExColor.ChangeColorBrightness(wb.GetPixel(coordinates.X, coordinates.Y), 0.1f);
+            wb.SetPixel(coordinates.X, coordinates.Y, newColor);
+            return wb;
         }
-
-        private void Darken(WriteableBitmap bitmap, Coordinates coordinates)
+        /// <summary>
+        /// Darkens pixel color.
+        /// </summary>
+        /// <param name="bitmap">Bitmap to work on.</param>
+        /// <param name="coordinates">Pixel coordinates.</param>
+        /// <returns></returns>
+        private WriteableBitmap Darken(WriteableBitmap bitmap, Coordinates coordinates)
         {
-            Color newColor = ExColor.ChangeColorBrightness(bitmap.GetPixel(coordinates.X, coordinates.Y), -0.06f);
-            bitmap.SetPixel(coordinates.X, coordinates.Y, newColor);
+            WriteableBitmap wb = bitmap;
+            Color newColor = ExColor.ChangeColorBrightness(wb.GetPixel(coordinates.X, coordinates.Y), -0.06f);
+            wb.SetPixel(coordinates.X, coordinates.Y, newColor);
+            return wb;
         }
     }
 }

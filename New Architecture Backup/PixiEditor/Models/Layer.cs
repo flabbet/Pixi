@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,10 @@ namespace PixiEditor.Models
         public WriteableBitmap LayerBitmap
         {
             get { return _layerBitmap; }
-            set { _layerBitmap = value; RaisePropertyChanged("LayerBitmap"); }
+            set {
+                _layerBitmap = value;
+                RaisePropertyChanged("LayerBitmap");
+            }
         }
 
         private Image _layerImage;
@@ -27,7 +31,10 @@ namespace PixiEditor.Models
         public Image LayerImage
         {
             get { return _layerImage; }
-            set { _layerImage = value; RaisePropertyChanged("LayerImage"); }
+            set {
+                _layerImage = value;
+                RaisePropertyChanged("LayerImage");
+            }
         }
 
         private int _width;
@@ -62,6 +69,8 @@ namespace PixiEditor.Models
         {
             LayerBitmap = layerBitmap;
             LayerImage = layerImage;
+            Width = (int)layerImage.Width;
+            Height = (int)layerImage.Height;
         }
     }
 }

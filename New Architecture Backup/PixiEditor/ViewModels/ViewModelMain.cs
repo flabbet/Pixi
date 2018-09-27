@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,20 +25,35 @@ namespace PixiEditor.ViewModels
 {
     class ViewModelMain : ViewModelBase
     {
-        public ObservableCollection<Layer> Layers { get; set; }
+
+        private ObservableCollection<Layer> _layers;
+
+        public ObservableCollection<Layer> Layers
+        {
+            get { return _layers; }
+            set { if (_layers != value) { _layers = value;} }
+        }
 
         public RelayCommand SelectToolCommand { get; set; } //Command that handles tool switching 
         public RelayCommand GenerateDrawAreaCommand { get; set; } //Command that generates draw area
         public RelayCommand MouseMoveOrClickCommand { get; set; } //Command that is used to draw
         public RelayCommand SaveFileCommand { get; set; } //Command that is used to save file
+        public RelayCommand UndoCommand { get; set; }
+        public RelayCommand RedoCommand { get; set; }
+        public RelayCommand MouseUpCommand { get; set; }
 
         private Layer _activeLayer;
 
         public Layer ActiveLayer //Active drawing layer
         {
             get { return _activeLayer; }
-            set { _activeLayer = value; RaisePropertyChanged("ActiveLayer"); }
-        }       
+            set {
+                UndoManager.AddUndoChange("ActiveLayer", _activeLayer, value, "Layer Changed");
+                _activeLayer = value;
+                RefreshImage();
+                RaisePropertyChanged("ActiveLayer");
+            }
+        }
 
         private double _mouseXonCanvas;
 
@@ -61,7 +77,14 @@ namespace PixiEditor.ViewModels
         public Color PrimaryColor //Primary color, hooked with left mouse button
         {
             get { return _primaryColor; }
-            set { if (_primaryColor != value) { _primaryColor = value; RaisePropertyChanged("PrimaryColor"); } }
+            set
+            {
+                if (_primaryColor != value)
+                {
+                   _primaryColor = value;
+                    RaisePropertyChanged("PrimaryColor");
+                }
+            }
         }
 
         private Color _secondaryColor = Colors.Black;
@@ -90,13 +113,66 @@ namespace PixiEditor.ViewModels
             GenerateDrawAreaCommand = new RelayCommand(GenerateDrawArea);
             MouseMoveOrClickCommand = new RelayCommand(MouseMoveOrClick);
             SaveFileCommand = new RelayCommand(SaveFile, CanSave);
+            UndoCommand = new RelayCommand(Undo, CanUndo);
+            RedoCommand = new RelayCommand(Redo, CanRedo);
+            MouseUpCommand = new RelayCommand(MouseUp);
             primaryToolSet = new ToolSet();
+            UndoManager.SetMainRoot(this);
         }
 
+        #region Undo/Redo
+        /// <summary>
+        /// Undo last action
+        /// </summary>
+        /// <param name="parameter"></param>
+        public void Undo(object parameter)
+        {
+            UndoManager.Undo();
+        }
+        /// <summary>
+        /// Returns true if undo can be done.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool CanUndo(object property)
+        {
+            return UndoManager.CanUndo;
+        }
+        /// <summary>
+        /// Redo last action
+        /// </summary>
+        /// <param name="parameter"></param>
+        public void Redo(object parameter)
+        {
+            UndoManager.Redo();
+        }
+        /// <summary>
+        /// Returns true if redo can be done.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        private bool CanRedo(object property)
+        {
+            return UndoManager.CanRedo;
+        }
+        #endregion
+
+        /// <summary>
+        /// Recognizes selected tool from UI
+        /// </summary>
+        /// <param name="parameter"></param>
         private void RecognizeTool(object parameter)
         {
             ToolType tool = (ToolType)Enum.Parse(typeof(ToolType), parameter.ToString());
             SelectedTool = tool;
+        }
+        /// <summary>
+        /// Executes when Mouse is up.
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void MouseUp(object parameter)
+        {
+            UndoManager.StopRecording();
         }
 
         /// <summary>
@@ -125,6 +201,7 @@ namespace PixiEditor.ViewModels
             {
                 primaryToolSet.UpdateCoordinates(cords);
                 primaryToolSet.ExecuteTool(ActiveLayer, cords, color, SelectedTool);
+                RefreshImage();
             }
             else
             {
@@ -136,6 +213,15 @@ namespace PixiEditor.ViewModels
                 {
                     SecondaryColor = ToolSet.ColorPicker(ActiveLayer, cords);
                 }
+            }
+        }
+
+        private void RefreshImage()
+        {
+            //Jak nie będzie działać z layerami to tutaj szukaj błędu
+            if (ActiveLayer != null)
+            {
+                Layers[0].LayerImage.Source = ActiveLayer.LayerBitmap;
             }
         }
 
@@ -151,7 +237,7 @@ namespace PixiEditor.ViewModels
                 Layers.Clear();
                 Layers.Add(new Layer(newFile.Width, newFile.Height));
                 ActiveLayer = Layers[0];
-            }
+            }            
         }
         /// <summary>
         /// Generates export dialog or saves directly if save data is known.
@@ -168,7 +254,11 @@ namespace PixiEditor.ViewModels
                 Exporter.ExportWithoutDialog(FileType.PNG, ActiveLayer.LayerImage);
             }
         }
-
+        /// <summary>
+        /// Returns true if file save is possible.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         private bool CanSave(object property)
         {
             return ActiveLayer != null;
